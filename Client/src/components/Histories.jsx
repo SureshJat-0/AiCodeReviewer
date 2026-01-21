@@ -4,7 +4,7 @@ import { FiChevronRight, FiPlus } from "react-icons/fi";
 import { MdHistory } from "react-icons/md";
 import { HiDocumentText } from "react-icons/hi";
 
-export default function History() {
+export default function Histories() {
   const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(false);
 

@@ -2,9 +2,8 @@ import { useState } from "react";
 import axios from "axios";
 import Editor from "@monaco-editor/react";
 import { useRef } from "react";
-import { Link } from "react-router-dom";
 import { generate } from "short-uuid";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { FiCode, FiCopy, FiTrash2, FiCheck } from "react-icons/fi";
 import {
   HiLightningBolt,
@@ -17,6 +16,7 @@ import {
   HiCheckCircle,
 } from "react-icons/hi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   const [response, setResponse] = useState();
@@ -133,6 +133,10 @@ const userId = req.query.id;
               Analyze your code for bugs, security issues, and best practices
             </p>
           </div>
+
+          <Link to="/upload" className="m-4 px-4 py-2 text-sm rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors flex items-center gap-2">
+            Upload file
+          </Link>
 
           <form onSubmit={getResponse} className="space-y-6 mb-8">
             <div className="bg-[#1a1a1a] rounded-2xl border border-gray-800 overflow-hidden">
