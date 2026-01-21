@@ -10,7 +10,7 @@ const getRouteAiResponse = async (req, res) => {
   if (code.length > maxCodeLength)
     throw new CustomExpressError(
       400,
-      `Code is too long. Maximum allowed length is ${maxCodeLength} characters.`
+      `Code is too long. Maximum allowed length is ${maxCodeLength} characters.`,
     );
   console.log("Getting response...");
   // Ai timeout
@@ -22,41 +22,80 @@ const getRouteAiResponse = async (req, res) => {
           () =>
             resolve({
               summary:
-                "The code generally works but has issues related to error handling, input validation, and maintainability. These problems can lead to runtime crashes, security risks, and difficulty scaling the application.",
+                "The provided code suffers from a critical SQL injection vulnerability and lacks robust error handling and input validation. It uses unsafe string concatenation for database queries and fails to provide appropriate HTTP status codes or filter sensitive data from the database response.",
               bugs: [
                 {
-                  issue: "Missing null checks for request data",
+                  issue: "Missing error handling",
                   severity: "medium",
                   explanation:
-                    "The code assumes required request fields always exist. If a client sends incomplete data, the application may throw runtime errors or crash.",
+                    "The database callback does not account for potential errors during execution, which could lead to unhandled exceptions or hung requests.",
+                },
+                {
+                  issue: "Asynchronous flow control",
+                  severity: "low",
+                  explanation:
+                    "Using a traditional callback pattern in modern Node.js environments makes the code harder to read and maintain compared to async/await.",
                 },
               ],
               security: [
                 {
-                  issue: "No input validation or sanitization",
+                  issue: "SQL Injection",
                   severity: "high",
                   explanation:
-                    "User-provided input is used directly without validation or sanitization, which can lead to injection attacks or unexpected behavior.",
+                    "The userId is concatenated directly into the SQL string, allowing an attacker to execute arbitrary database commands by manipulating the query parameter.",
+                },
+                {
+                  issue: "Exposure of sensitive data",
+                  severity: "medium",
+                  explanation:
+                    "Using SELECT * returns all columns from the user table, which likely includes sensitive information such as password hashes or private tokens.",
                 },
               ],
               bestPractices: [
                 {
-                  issue: "Hardcoded configuration values",
+                  issue: "Lack of HTTP status codes",
                   severity: "low",
                   explanation:
-                    "Configuration values such as ports or secrets are hardcoded instead of being loaded from environment variables, reducing flexibility across environments.",
+                    "The function returns generic messages without proper HTTP status codes, such as 400 for bad requests or 500 for internal errors.",
+                },
+                {
+                  issue: "Missing input validation",
+                  severity: "low",
+                  explanation:
+                    "The code does not verify if the provided ID is in the correct format (e.g., an integer) before attempting to query the database.",
                 },
               ],
               improvedCode:
-                "function handleRequest(req, res) {\n  try {\n    const { username } = req.body || {};\n\n    if (!username) {\n      return res.status(400).json({ error: 'Username is required' });\n    }\n\n    // Process request safely\n    res.status(200).json({ message: 'Request processed successfully' });\n  } catch (error) {\n    res.status(500).json({ error: 'Internal server error' });\n  }\n}",
+                "async function getUserData(req, res) {\n" +
+                "  const userId = req.query.id;\n" +
+                "\n" +
+                "  if (!userId) {\n" +
+                '    return res.status(400).json({ error: "User ID not provided" });\n' +
+                "  }\n" +
+                "\n" +
+                "  try {\n" +
+                "    // Use parameterized queries to prevent SQL injection and select only necessary fields\n" +
+                '    const query = "SELECT id, username, email FROM users WHERE id = ?";\n' +
+                "    const [rows] = await database.execute(query, [userId]);\n" +
+                "\n" +
+                "    if (!rows || rows.length === 0) {\n" +
+                '      return res.status(404).json({ error: "User not found" });\n' +
+                "    }\n" +
+                "\n" +
+                "    res.status(200).json(rows[0]);\n" +
+                "  } catch (error) {\n" +
+                '    console.error("Database error:", error);\n' +
+                '    res.status(500).json({ error: "Internal server error" });\n' +
+                "  }\n" +
+                "}",
             }),
-          1000
+          1000,
         );
       }),
       new Promise((_, reject) => {
         setTimeout(
           () => reject(new Error("AI_TIMEOUT")),
-          60 * 1000 // 60 seconds to get ai response
+          60 * 1000, // 60 seconds to get ai response
         );
       }),
     ]);
@@ -66,13 +105,13 @@ const getRouteAiResponse = async (req, res) => {
     if (err.message === "AI_TIMEOUT") {
       throw new CustomExpressError(
         504,
-        "AI took too long to respond. Please try again."
+        "AI took too long to respond. Please try again.",
       );
     }
     console.log(err);
     throw new CustomExpressError(
       500,
-      "AI service failed. Please try again later."
+      "AI service failed. Please try again later.",
     );
   }
 };

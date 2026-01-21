@@ -1,10 +1,10 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./Login";
-import Signup from "./Signup";
-import Home from "./Home";
-import History from "./History";
-import HistoryReview from "./HistoryReview";
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Homepage from "./layouts/Homepage";
+import Histories from "./layouts/Histories";
+import HistoryReviewPage from "./layouts/HistoryReviewPage";
 
 function App() {
   return (
@@ -13,9 +13,9 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/history/:historyId" element={<HistoryReview />} />
+          <Route path="/" element={<Homepage />} />
+          <Route path="/history" element={<Histories />} />
+          <Route path="/history/:historyId" element={<HistoryReviewPage />} />
         </Routes>
       </BrowserRouter>
     </>
