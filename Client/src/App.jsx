@@ -6,6 +6,7 @@ import HistoryReviewPage from "./layouts/HistoryReviewPage";
 import HomePage from "./layouts/Homepage";
 import HistoriesPage from "./layouts/HistoriesPage";
 import ReviewUpload from "./components/ReviewUpload";
+import GitHubLinkReviewPage from "./layouts/GitHubLinkReviewPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/upload" element={<ReviewUpload />} />
           <Route path="/history" element={<HistoriesPage />} />
+          <Route path="/github" element={<GitHubLinkReviewPage />} />
           <Route path="/history/:historyId" element={<HistoryReviewPage />} />
         </Routes>
       </BrowserRouter>
