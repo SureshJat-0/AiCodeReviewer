@@ -90,7 +90,7 @@ const getAiResponseController = async (req, res) => {
                 "  }\n" +
                 "}",
             }),
-          3000,
+          1000,
         );
       }),
       new Promise((_, reject) => {

@@ -37,7 +37,7 @@ export default function Histories() {
             Review History
           </h1>
           <p className="text-sm text-gray-400">
-            View your previous code reviews and analyses
+            Browse your previous AI-powered code reviews
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default function Histories() {
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-pulse flex flex-col items-center">
               <MdHistory className="w-16 h-16 text-blue-500 mb-4" />
-              <p className="text-lg text-gray-300">Loading history...</p>
+              <p className="text-lg text-gray-300">Fetching your reviews...</p>
             </div>
           </div>
         ) : !history || history.length === 0 ? (
@@ -53,17 +53,17 @@ export default function Histories() {
             <div className="w-20 h-20 rounded-2xl bg-blue-600/20 border border-blue-600/30 flex items-center justify-center mb-6">
               <MdHistory className="w-10 h-10 text-blue-400" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">No History Yet</h3>
+            <h3 className="text-xl font-semibold mb-2">No reviews yet</h3>
             <p className="text-sm text-gray-400 text-center max-w-md mb-6">
-              You haven't reviewed any code yet. Start by analyzing your first
-              code snippet.
+              You haven't run a review yet. Submit your first snippet to see it
+              here.
             </p>
             <Link
               to="/"
               className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors flex items-center gap-2"
             >
               <FiPlus className="w-4 h-4" />
-              Create New Review
+              Start a review
             </Link>
           </div>
         ) : (

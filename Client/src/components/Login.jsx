@@ -15,7 +15,7 @@ export default function Login() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    toast.success("This is a UI demo - no backend connected");
+    toast.success("UI preview only — authentication isn't connected.");
   };
 
   return (
@@ -54,8 +54,8 @@ export default function Login() {
             Code Review
           </h1>
           <p className="text-gray-400 text-lg mb-12 max-w-md">
-            Analyze your code with AI-powered insights for bugs, security
-            issues, and best practices.
+            Analyze your code with AI-powered insights on bugs, security
+            risks, and best practices.
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export default function Login() {
             <div>
               <h3 className="font-semibold mb-1">Instant Analysis</h3>
               <p className="text-sm text-gray-400">
-                Get detailed feedback on your code quality
+                  Get detailed insights on your code quality
               </p>
             </div>
           </div>
@@ -79,7 +79,7 @@ export default function Login() {
             <div>
               <h3 className="font-semibold mb-1">Multiple Checks</h3>
               <p className="text-sm text-gray-400">
-                Bugs, security, and best practices
+                  Checks for bugs, security gaps, and best practices
               </p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function Login() {
             <div>
               <h3 className="font-semibold mb-1">Keep History</h3>
               <p className="text-sm text-gray-400">
-                Review and track all your code analyses
+                  Keep a record of every review
               </p>
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function Login() {
               <div>
                 <h2 className="text-3xl font-bold mb-1">Welcome Back</h2>
                 <p className="text-gray-400">
-                  Sign in to continue reviewing your code
+                  Sign in to continue your AI reviews
                 </p>
               </div>
             </div>
@@ -216,7 +216,7 @@ export default function Login() {
               onClick={() => {
                 setEmail("demo@example.com");
                 setPassword("Demo@12345");
-                toast.success("Demo credentials filled");
+                toast.success("Demo credentials added.");
               }}
               className="px-3 py-2 grow rounded-md bg-blue-600/10 border border-blue-600/30 text-blue-300 hover:bg-blue-600/20 hover:border-blue-600/40 hover:text-blue-200 text-sm font-medium transition-colors flex items-center justify-center gap-2"
               title="Fill with demo credentials"

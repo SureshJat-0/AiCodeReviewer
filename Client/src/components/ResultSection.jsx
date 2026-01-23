@@ -18,10 +18,10 @@ export default function ResultSection({
   const copyImprovedCodeToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(response.improvedCode);
-      toast.success("Copied");
+      toast.success("Improved code copied to your clipboard.");
       console.log("Improved code copied!");
     } catch (err) {
-      toast.error("Failed to copy");
+      toast.error("Unable to copy right now. Please try again.");
       console.error("Failed to copy text: ", err);
     }
   };
@@ -46,7 +46,7 @@ export default function ResultSection({
           <div className="flex flex-col items-center justify-center py-20">
             <div className="animate-pulse flex flex-col items-center">
               <HiLightBulb className="w-16 h-16 text-blue-500 mb-4" />
-              <p className="text-lg text-gray-300">Analyzing your code...</p>
+              <p className="text-lg text-gray-300">Review in progress...</p>
               <p className="text-xs text-gray-500 mt-2">
                 This may take a few moments
               </p>
@@ -57,10 +57,10 @@ export default function ResultSection({
             <div className="w-20 h-20 rounded-2xl bg-blue-600/20 border border-blue-600/30 flex items-center justify-center mb-6">
               <FiCode className="w-10 h-10 text-blue-400" />
             </div>
-            <h3 className="text-xl font-semibold mb-2">Ready to Review</h3>
+            <h3 className="text-xl font-semibold mb-2">Ready when you are</h3>
             <p className="text-sm text-gray-400 text-center max-w-md">
-              Paste your code above and click "Analyze Code" to get instant
-              feedback on bugs, security, and best practices
+              Paste your code and run a review to get quick feedback on bugs,
+              security, and best practices
             </p>
           </div>
         )
@@ -73,7 +73,7 @@ export default function ResultSection({
                 <HiDocumentText className="w-5 h-5 text-blue-400" />
               </div>
               <div className="flex-1">
-                <h2 className="text-xl font-bold mb-3">Summary</h2>
+                <h2 className="text-xl font-bold mb-3">Review Summary</h2>
                 <p className="text-sm text-gray-300 leading-relaxed">
                   {response?.summary}
                 </p>
@@ -117,7 +117,7 @@ export default function ResultSection({
                   <FiCheck className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-sm text-gray-400">
-                  No bugs found! Your code looks clean.
+                  No bugs detected. Nice work.
                 </p>
               </div>
             )}
@@ -159,7 +159,7 @@ export default function ResultSection({
                   <HiShieldCheck className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-sm text-gray-400">
-                  No security issues detected!
+                  No security issues detected.
                 </p>
               </div>
             )}
@@ -201,7 +201,7 @@ export default function ResultSection({
                   <FiCheck className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-sm text-gray-400">
-                  Code follows best practices!
+                  Already following best practices.
                 </p>
               </div>
             )}
@@ -221,7 +221,7 @@ export default function ResultSection({
                 className="px-4 py-2 text-sm rounded-lg bg-green-600 hover:bg-green-500 text-white transition-colors flex items-center gap-2"
               >
                 <FiCopy className="w-4 h-4" />
-                Copy Code
+                Copy improved code
               </button>
             </div>
             <div className="p-2">

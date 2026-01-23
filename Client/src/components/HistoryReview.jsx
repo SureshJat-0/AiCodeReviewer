@@ -67,10 +67,10 @@ export default function HistoryReview() {
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-white mb-2">
-              Loading Review
+              Loading review
             </h2>
             <p className="text-gray-400">
-              Please wait while we fetch your review...
+              Hang tight while we load your review.
             </p>
           </div>
         </div>
@@ -83,16 +83,16 @@ export default function HistoryReview() {
         <div className="w-20 h-20 rounded-2xl bg-red-600/20 border border-red-600/30 flex items-center justify-center mx-auto mb-6">
           <HiExclamation className="w-10 h-10 text-red-400" />
         </div>
-        <h3 className="text-xl font-semibold mb-2">No History Found</h3>
+        <h3 className="text-xl font-semibold mb-2">Review not found</h3>
         <p className="text-sm text-gray-400 mb-6">
-          The requested review doesn't exist.
+          We couldn't find that review.
         </p>
         <Link
           to="/history"
           className="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors inline-flex items-center gap-2"
         >
           <FiChevronLeft className="w-4 h-4" />
-          Back to History
+          Back to history
         </Link>
       </div>
     );
@@ -178,7 +178,7 @@ export default function HistoryReview() {
                   <FiCheck className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-sm text-gray-400">
-                  No bugs found! Your code looks clean.
+                  No bugs detected. Nice work.
                 </p>
               </div>
             )}
@@ -221,7 +221,7 @@ export default function HistoryReview() {
                   <HiShieldCheck className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-sm text-gray-400">
-                  No security issues detected!
+                  No security issues detected.
                 </p>
               </div>
             )}
@@ -264,7 +264,7 @@ export default function HistoryReview() {
                   <FiCheck className="w-8 h-8 text-green-400" />
                 </div>
                 <p className="text-sm text-gray-400">
-                  Code follows best practices!
+                  Already following best practices.
                 </p>
               </div>
             )}
