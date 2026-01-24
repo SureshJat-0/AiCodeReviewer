@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 
-async function getAiResponse(code) {
+async function getAiResponse2(code) {
   const ai = new GoogleGenAI(process.env.GEMINI_API_KEY);
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -9,6 +9,21 @@ async function getAiResponse(code) {
   // Parsing to JSON
   try {
     const data = JSON.parse(response.text);
+    return data;
+  } catch (err) {
+    console.error("Error : ", err);
+    return { error: "Error" };
+  }
+}
+import { GoogleGenerativeAI } from "@google/generative-ai";
+
+async function getAiResponse(code) {
+  const ai = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
+  const model = ai.getGenerativeModel({ model: "gemini-2.5-flash" });
+  const result = await model.generateContent(getPrompt(code));
+  // Parsing to JSON
+  try {
+    const data = JSON.parse(result.response.text());
     return data;
   } catch (err) {
     console.error("Error : ", err);
