@@ -68,6 +68,9 @@ const userId = req.query.id;
           withCredentials: true,
         },
       );
+      if (data?.error) {
+        throw new Error("AI service failed. Please try again later.");
+      }
       setResponse(data);
       // adding history in local storage
       const history = JSON.parse(localStorage.getItem("history")) || [];
@@ -125,8 +128,7 @@ const userId = req.query.id;
         return;
       }
       setCode(codeToReview);
-      console.log(codeToReview);
-      getAiResponse(e, code);
+      getAiResponse(e, codeToReview);
     } catch (err) {
       toast.error("We couldn't read your file. Please try again.");
       console.log(err);
@@ -178,9 +180,9 @@ const userId = req.query.id;
       const { owner, repo, branch, path } = parseGithubBlobUrl(githubUrl);
       const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${branch}`;
       const response = await axios.get(url);
-      const code = decodeBase64ToUtf8(response.data.content);
-      setCode(code);
-      getAiResponse(e, code);
+      const codeToReview = decodeBase64ToUtf8(response.data.content);
+      setCode(codeToReview);
+      getAiResponse(e, codeToReview);
     } catch (err) {
       console.log(err);
       if (err.status === 404) toast.error("File not found on GitHub.");
@@ -439,7 +441,11 @@ const userId = req.query.id;
           {/* rendering form according to tab */}
           {renderTab()}
 
-          <ResultSection response={response} loading={loading} />
+          <ResultSection
+            response={response}
+            loading={loading}
+            originalCode={null}
+          />
         </div>
       </main>
     </>

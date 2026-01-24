@@ -8,13 +8,10 @@ import {
   HiCheckCircle,
 } from "react-icons/hi";
 import { toast } from "react-hot-toast";
-import { FiCode, FiCopy } from "react-icons/fi";
+import { FiCheck, FiCode, FiCopy } from "react-icons/fi";
 import Editor from "@monaco-editor/react";
 
-export default function ResultSection({
-  response,
-  loading,
-}) {
+export default function ResultSection({ response, loading, originalCode }) {
   const copyImprovedCodeToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(response.improvedCode);
@@ -39,6 +36,24 @@ export default function ResultSection({
       </span>
     );
   };
+
+  // bugs, security, best practice sections
+  const SectionMapChildComponent = ({ section }) => {
+    return (
+      <div className="p-4 rounded-xl bg-[#0f0f0f] border border-gray-800 hover:border-gray-700 transition-colors">
+        <div className="flex items-start justify-between mb-3">
+          <h3 className="font-semibold text-base text-gray-200">
+            {section.issue}
+          </h3>
+          <SeverityBadge severity={section.severity} />
+        </div>
+        <p className="text-sm text-gray-400 leading-relaxed">
+          {section.explanation}
+        </p>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {!response ? (
@@ -95,20 +110,7 @@ export default function ResultSection({
             {response?.bugs && response?.bugs.length !== 0 ? (
               <div className="space-y-4">
                 {response.bugs.map((bug, index) => (
-                  <div
-                    key={index}
-                    className="p-4 rounded-xl bg-[#0f0f0f] border border-gray-800 hover:border-gray-700 transition-colors"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-semibold text-base text-gray-200">
-                        {bug.issue}
-                      </h3>
-                      <SeverityBadge severity={bug.severity} />
-                    </div>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                      {bug.explanation}
-                    </p>
-                  </div>
+                  <SectionMapChildComponent section={bug} key={index} />
                 ))}
               </div>
             ) : (
@@ -137,20 +139,10 @@ export default function ResultSection({
             {response?.security && response?.security.length !== 0 ? (
               <div className="space-y-4">
                 {response.security.map((securityChild, index) => (
-                  <div
+                  <SectionMapChildComponent
+                    section={securityChild}
                     key={index}
-                    className="p-4 rounded-xl bg-[#0f0f0f] border border-gray-800 hover:border-gray-700 transition-colors"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-semibold text-base text-gray-200">
-                        {securityChild.issue}
-                      </h3>
-                      <SeverityBadge severity={securityChild.severity} />
-                    </div>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                      {securityChild.explanation}
-                    </p>
-                  </div>
+                  />
                 ))}
               </div>
             ) : (
@@ -179,20 +171,10 @@ export default function ResultSection({
             {response?.bestPractices && response?.bestPractices.length !== 0 ? (
               <div className="space-y-4">
                 {response.bestPractices.map((bestPractice, index) => (
-                  <div
+                  <SectionMapChildComponent
+                    section={bestPractice}
                     key={index}
-                    className="p-4 rounded-xl bg-[#0f0f0f] border border-gray-800 hover:border-gray-700 transition-colors"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="font-semibold text-base text-gray-200">
-                        {bestPractice.issue}
-                      </h3>
-                      <SeverityBadge severity={bestPractice.severity} />
-                    </div>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                      {bestPractice.explanation}
-                    </p>
-                  </div>
+                  />
                 ))}
               </div>
             ) : (
@@ -208,39 +190,74 @@ export default function ResultSection({
           </div>
 
           {/* Improved Code Section */}
-          <div className="bg-[#1a1a1a] rounded-2xl border border-gray-800 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                  <HiCheckCircle className="w-5 h-5 text-green-400" />
+          <div
+            className={`grid grid-cols-1 ${originalCode ? "lg:grid-cols-2" : ""} gap-6`}
+          >
+            {/* Original Code */}
+            {originalCode && (
+              <div className="bg-[#1a1a1a] rounded-2xl border border-gray-800 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-800 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-gray-500/20 flex items-center justify-center">
+                    <FiCode className="w-5 h-5 text-gray-400" />
+                  </div>
+                  <h2 className="text-xl font-bold">Original Code</h2>
                 </div>
-                <h2 className="text-xl font-bold">Improved Code</h2>
+                <div className="p-2">
+                  <Editor
+                    height="60vh"
+                    defaultLanguage="javascript"
+                    value={originalCode}
+                    theme="vs-dark"
+                    options={{
+                      readOnly: true,
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      roundedSelection: true,
+                      scrollBeyondLastLine: true,
+                      automaticLayout: true,
+                      padding: { top: 16, bottom: 16 },
+                    }}
+                  />
+                </div>
               </div>
-              <button
-                onClick={copyImprovedCodeToClipboard}
-                className="px-4 py-2 text-sm rounded-lg bg-green-600 hover:bg-green-500 text-white transition-colors flex items-center gap-2"
-              >
-                <FiCopy className="w-4 h-4" />
-                Copy improved code
-              </button>
-            </div>
-            <div className="p-2">
-              <Editor
-                height="50vh"
-                defaultLanguage="javascript"
-                value={response?.improvedCode}
-                theme="vs-dark"
-                options={{
-                  readOnly: true,
-                  minimap: { enabled: false },
-                  fontSize: 14,
-                  lineNumbers: "on",
-                  roundedSelection: true,
-                  scrollBeyondLastLine: true,
-                  automaticLayout: true,
-                  padding: { top: 16, bottom: 16 },
-                }}
-              />
+            )}
+
+            {/* Improved Code */}
+            <div className="bg-[#1a1a1a] rounded-2xl border border-gray-800 overflow-hidden">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                    <HiCheckCircle className="w-5 h-5 text-green-400" />
+                  </div>
+                  <h2 className="text-xl font-bold">Improved Code</h2>
+                </div>
+                <button
+                  onClick={copyImprovedCodeToClipboard}
+                  className="px-4 py-2 text-sm rounded-lg bg-green-600 hover:bg-green-500 text-white transition-colors flex items-center gap-2"
+                >
+                  <FiCopy className="w-4 h-4" />
+                  Copy
+                </button>
+              </div>
+              <div className="p-2">
+                <Editor
+                  height="50vh"
+                  defaultLanguage="javascript"
+                  value={response?.improvedCode}
+                  theme="vs-dark"
+                  options={{
+                    readOnly: true,
+                    minimap: { enabled: false },
+                    fontSize: 14,
+                    lineNumbers: "on",
+                    roundedSelection: true,
+                    scrollBeyondLastLine: true,
+                    automaticLayout: true,
+                    padding: { top: 16, bottom: 16 },
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
