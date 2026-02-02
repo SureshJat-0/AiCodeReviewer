@@ -2,9 +2,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 
 import { aiRouter } from "./routes/aiCommunication.js";
+import authRouter from "./routes/authRouter.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,8 +20,17 @@ var corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 
+// mongoDb connect
+mongoose
+  .connect("mongodb://127.0.0.1:27017/aiCodeReviewer")
+  .then(() => {
+    console.log("MongoDb Connected!");
+  })
+  .catch((err) => console.log(err));
+
 // Routers
 app.use("/api/ai", aiRouter);
+app.use("/api/auth", authRouter);
 
 // error handler
 app.use((err, req, res, next) => {

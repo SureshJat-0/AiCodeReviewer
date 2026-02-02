@@ -1,5 +1,5 @@
 import Aside from "../components/aside";
-import Review from "../components/Review";
+import Review from "../pages/Review";
 
 export default function HomePage() {
   return (

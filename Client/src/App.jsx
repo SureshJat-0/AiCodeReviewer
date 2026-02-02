@@ -1,10 +1,10 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
 import HistoryReviewPage from "./layouts/HistoryReviewPage";
 import HomePage from "./layouts/Homepage";
 import HistoriesPage from "./layouts/HistoriesPage";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
   return (

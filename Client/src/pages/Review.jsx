@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import { FiCode, FiCopy, FiTrash2 } from "react-icons/fi";
 import { HiLightningBolt } from "react-icons/hi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import ResultSection from "./ResultSection";
+import ResultSection from "../components/ResultSection";
 import { FaFileUpload } from "react-icons/fa";
 
 export default function Home() {

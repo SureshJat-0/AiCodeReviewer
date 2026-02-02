@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiChevronRight, FiPlus } from "react-icons/fi";
-import { MdHistory } from "react-icons/md";
+import { MdDelete, MdHistory } from "react-icons/md";
 import { HiDocumentText } from "react-icons/hi";
 
 export default function Histories() {
@@ -13,6 +13,17 @@ export default function Histories() {
     const history = JSON.parse(localStorage.getItem("history")) || null;
     setHistory(history);
     setLoading(false);
+  };
+
+  const deleteHistory = (e, id) => {
+    e.preventDefault();
+    try {
+      const updatedHistory = history.filter((el) => el.id != id);
+      localStorage.setItem("history", JSON.stringify(updatedHistory));
+      setHistory(updatedHistory);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
@@ -90,6 +101,9 @@ export default function Histories() {
                         </p>
                       </div>
                     </div>
+                    <button onClick={(ev) => deleteHistory(ev, e.id)}>
+                      <MdDelete className="w-6 h-6 cursor-pointer text-gray-200" />
+                    </button>
                     <FiChevronRight className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors shrink-0 ml-4" />
                   </div>
                   <div className="flex items-center gap-4 text-xs text-gray-500">

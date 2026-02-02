@@ -1,6 +1,5 @@
-import React from "react";
 import Aside from "../components/aside";
-import HistoryReview from "../components/HistoryReview";
+import HistoryReview from "../pages/HistoryReview";
 
 export default function HistoryReviewPage() {
   return (

@@ -6,16 +6,16 @@ import { MdHistory } from "react-icons/md";
 import { FiChevronLeft, FiEye, FiEyeOff, FiPlus } from "react-icons/fi";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
+import { useAuth } from "../contexts/auth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     password: "",
-    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { signup } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,9 +25,14 @@ export default function Signup() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleUserSignup = async (e) => {
     e.preventDefault();
-    toast.success("UI preview only — authentication isn't connected.");
+    await signup(formData);
+    setFormData({
+      fullName: "",
+      email: "",
+      password: "",
+    });
   };
 
   return (
@@ -66,8 +71,8 @@ export default function Signup() {
             Code Review
           </h1>
           <p className="text-gray-400 text-lg mb-12 max-w-md">
-            Analyze your code with AI-powered insights on bugs, security
-            risks, and best practices.
+            Analyze your code with AI-powered insights on bugs, security risks,
+            and best practices.
           </p>
         </div>
 
@@ -79,7 +84,7 @@ export default function Signup() {
             <div>
               <h3 className="font-semibold mb-1">Instant Analysis</h3>
               <p className="text-sm text-gray-400">
-                  Get detailed insights on your code quality
+                Get detailed insights on your code quality
               </p>
             </div>
           </div>
@@ -91,7 +96,7 @@ export default function Signup() {
             <div>
               <h3 className="font-semibold mb-1">Multiple Checks</h3>
               <p className="text-sm text-gray-400">
-                  Checks for bugs, security gaps, and best practices
+                Checks for bugs, security gaps, and best practices
               </p>
             </div>
           </div>
@@ -103,7 +108,7 @@ export default function Signup() {
             <div>
               <h3 className="font-semibold mb-1">Keep History</h3>
               <p className="text-sm text-gray-400">
-                  Keep a record of every review
+                Keep a record of every review
               </p>
             </div>
           </div>
@@ -119,18 +124,27 @@ export default function Signup() {
       {/* Right Side - Signup Form */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12 overflow-y-auto">
         <div className="w-full max-w-md py-8">
-          <div className="mb-8">
+          <div className="mb-8 flex">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-3xl font-bold mb-1">Create Account</h2>
-                <p className="text-gray-400">
+                <p className="text-gray-400 wrap-break-word">
                   Create an account to start AI-powered reviews
                 </p>
               </div>
             </div>
+            <Link
+              to="/"
+              className="inline-block mb-6 whitespace-nowrap shrink-0"
+            >
+              <button className="px-4 py-2 mt-4 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center gap-2">
+                <FiChevronLeft className="w-4 h-4" />
+                Back to Home
+              </button>
+            </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleUserSignup} className="space-y-5">
             {/* Full Name Input */}
             <div>
               <label className="block text-sm font-medium mb-2">
@@ -138,9 +152,10 @@ export default function Signup() {
               </label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="fullName"
+                value={formData.fullName}
                 onChange={handleChange}
+                required
                 placeholder="John Doe"
                 className="w-full px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e1e1e] transition-all"
               />
@@ -156,6 +171,7 @@ export default function Signup() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                required
                 placeholder="you@example.com"
                 className="w-full px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e1e1e] transition-all"
               />
@@ -170,7 +186,9 @@ export default function Signup() {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
+                  required
                   placeholder="••••••••"
+                  autoComplete="password"
                   className="w-full px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e1e1e] transition-all"
                 />
                 <button
@@ -188,7 +206,7 @@ export default function Signup() {
             </div>
 
             {/* Confirm Password Input */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-2">
                 Confirm Password
               </label>
@@ -213,10 +231,10 @@ export default function Signup() {
                   )}
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {/* Terms & Conditions */}
-            <label className="flex items-start gap-2 cursor-pointer">
+            {/* <label className="flex items-start gap-2 cursor-pointer">
               <input
                 type="checkbox"
                 className="w-4 h-4 bg-[#1a1a1a] border border-gray-800 rounded cursor-pointer mt-1"
@@ -231,7 +249,7 @@ export default function Signup() {
                   Privacy Policy
                 </a>
               </span>
-            </label>
+            </label> */}
 
             {/* Signup Button */}
             <button
@@ -279,10 +297,9 @@ export default function Signup() {
               type="button"
               onClick={() => {
                 setFormData({
-                  name: "Demo User",
+                  fullName: "Demo User",
                   email: "demo@example.com",
-                  password: "Demo@12345",
-                  confirmPassword: "Demo@12345",
+                  password: "demo123",
                 });
                 toast.success("Demo credentials added.");
               }}

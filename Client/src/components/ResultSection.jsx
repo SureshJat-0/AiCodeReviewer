@@ -375,9 +375,9 @@ export default function ResultSection({ response, loading, originalCode }) {
               </div>
               <button
                 onClick={() => setOpenExportWindow(true)}
-                className="px-6 py-3 cursor-pointer bg-linear-to-r from-blue-600 to-blue-500  text-white font-medium rounded-xl flex items-center gap-2 transition-all shadow-lg hover:shadow-blue-500/30 hover:scale-102"
+                className="px-5 py-2 cursor-pointer bg-linear-to-r from-blue-600 to-blue-500  text-white font-medium rounded-xl flex items-center gap-2 transition-all shadow-lg hover:shadow-blue-500/30 hover:scale-102"
               >
-                <FiDownload className="w-5 h-5" />
+                <FiDownload className="w-4 h-4" />
                 Export Report
               </button>
             </div>

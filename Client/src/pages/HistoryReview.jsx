@@ -3,7 +3,7 @@ import { useLocation, useParams, Link } from "react-router-dom";
 import { HiExclamation } from "react-icons/hi";
 import { FiChevronLeft } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
-import ResultSection from "./ResultSection";
+import ResultSection from "../components/ResultSection";
 
 export default function HistoryReview() {
   const [historyItem, setHistoryItem] = useState(null);

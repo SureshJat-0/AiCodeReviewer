@@ -7,15 +7,19 @@ import { FiChevronLeft, FiEye, FiEyeOff } from "react-icons/fi";
 import { BiLogIn } from "react-icons/bi";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
+import { useAuth } from "../contexts/auth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    toast.success("UI preview only — authentication isn't connected.");
+    await login({ email, password });
+    setEmail("");
+    setPassword("");
   };
 
   return (
@@ -54,8 +58,8 @@ export default function Login() {
             Code Review
           </h1>
           <p className="text-gray-400 text-lg mb-12 max-w-md">
-            Analyze your code with AI-powered insights on bugs, security
-            risks, and best practices.
+            Analyze your code with AI-powered insights on bugs, security risks,
+            and best practices.
           </p>
         </div>
 
@@ -67,7 +71,7 @@ export default function Login() {
             <div>
               <h3 className="font-semibold mb-1">Instant Analysis</h3>
               <p className="text-sm text-gray-400">
-                  Get detailed insights on your code quality
+                Get detailed insights on your code quality
               </p>
             </div>
           </div>
@@ -79,7 +83,7 @@ export default function Login() {
             <div>
               <h3 className="font-semibold mb-1">Multiple Checks</h3>
               <p className="text-sm text-gray-400">
-                  Checks for bugs, security gaps, and best practices
+                Checks for bugs, security gaps, and best practices
               </p>
             </div>
           </div>
@@ -91,24 +95,18 @@ export default function Login() {
             <div>
               <h3 className="font-semibold mb-1">Keep History</h3>
               <p className="text-sm text-gray-400">
-                  Keep a record of every review
+                Keep a record of every review
               </p>
             </div>
           </div>
-          <Link to="/" className="inline-block mb-6">
-            <button className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center gap-2">
-              <FiChevronLeft className="w-4 h-4" />
-              Back to Home
-            </button>
-          </Link>
         </div>
       </div>
 
       {/* Right Side - Login Form */}
       <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
         <div className="w-full max-w-md">
-          <div className="mb-8">
-            <div className="flex items-center justify-between">
+          <div className="mb-8 flex justify-between">
+            <div className="flex items-center">
               <div>
                 <h2 className="text-3xl font-bold mb-1">Welcome Back</h2>
                 <p className="text-gray-400">
@@ -116,9 +114,15 @@ export default function Login() {
                 </p>
               </div>
             </div>
+            <Link to="/" className="inline-block mb-6">
+              <button className="px-4 py-2 mt-4 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center gap-2">
+                <FiChevronLeft className="w-4 h-4" />
+                Back to Home
+              </button>
+            </Link>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-5">
             {/* Email Input */}
             <div>
               <label className="block text-sm font-medium mb-2">
@@ -128,6 +132,7 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="you@example.com"
                 className="w-full px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e1e1e] transition-all"
               />
@@ -141,7 +146,9 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                   placeholder="••••••••"
+                  autoComplete="password"
                   className="w-full px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e1e1e] transition-all"
                 />
                 <button
@@ -159,7 +166,7 @@ export default function Login() {
             </div>
 
             {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between text-sm">
+            {/* <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -173,7 +180,7 @@ export default function Login() {
               >
                 Forgot password?
               </a>
-            </div>
+            </div> */}
 
             {/* Login Button */}
             <button
@@ -215,7 +222,7 @@ export default function Login() {
               type="button"
               onClick={() => {
                 setEmail("demo@example.com");
-                setPassword("Demo@12345");
+                setPassword("demo123");
                 toast.success("Demo credentials added.");
               }}
               className="px-3 py-2 grow rounded-md bg-blue-600/10 border border-blue-600/30 text-blue-300 hover:bg-blue-600/20 hover:border-blue-600/40 hover:text-blue-200 text-sm font-medium transition-colors flex items-center justify-center gap-2"
