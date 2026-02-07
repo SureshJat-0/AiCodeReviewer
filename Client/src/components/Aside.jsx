@@ -3,11 +3,13 @@ import { Toaster } from "react-hot-toast";
 import { Link, useLocation } from "react-router-dom";
 import { FiCode, FiChevronsLeft, FiChevronsRight } from "react-icons/fi";
 import { MdHistory } from "react-icons/md";
-import { BiLogIn } from "react-icons/bi";
+import { BiLogIn, BiLogOut } from "react-icons/bi";
+import { useAuth } from "../contexts/auth";
 
 export default function Aside() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
+  const { user, logout } = useAuth();
   return (
     <aside
       className={`${sidebarOpen ? "w-56" : "w-14"} bg-[#141414] border-r border-gray-800/50 transition-all duration-300 flex flex-col`}
@@ -99,14 +101,25 @@ export default function Aside() {
 
       {sidebarOpen && (
         <div className="p-3 border-t border-gray-800/50">
-          <Link
-            to="/login"
-            aria-label="Sign In"
-            className="w-full px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 justify-center"
-          >
-            <BiLogIn className="w-4 h-4" />
-            Sign In
-          </Link>
+          {user ? (
+            <button
+              onClick={logout}
+              aria-label="Sign In"
+              className="w-full px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 justify-center"
+            >
+              <BiLogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              aria-label="Sign In"
+              className="w-full px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 justify-center"
+            >
+              <BiLogIn className="w-4 h-4" />
+              Sign In
+            </Link>
+          )}
         </div>
       )}
     </aside>

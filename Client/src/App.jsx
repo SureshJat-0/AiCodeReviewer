@@ -5,19 +5,19 @@ import HomePage from "./layouts/Homepage";
 import HistoriesPage from "./layouts/HistoriesPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import PublicReviewPage from "./layouts/PublicReviewPage";
 
 function App() {
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/history" element={<HistoriesPage />} />
-          <Route path="/history/:historyId" element={<HistoryReviewPage />} />
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/history" element={<HistoriesPage />} />
+        <Route path="/history/:historyId" element={<HistoryReviewPage />} />
+        <Route path="/share/:reviewId" element={<PublicReviewPage />} />
+      </Routes>
     </>
   );
 }

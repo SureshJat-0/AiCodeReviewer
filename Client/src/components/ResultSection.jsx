@@ -8,14 +8,26 @@ import {
   HiCheckCircle,
 } from "react-icons/hi";
 import { toast } from "react-hot-toast";
-import { FiCheck, FiCode, FiCopy, FiDownload, FiX } from "react-icons/fi";
+import {
+  FiCheck,
+  FiCode,
+  FiCopy,
+  FiDownload,
+  FiX,
+  FiShare2,
+} from "react-icons/fi";
 import { MdDataObject, MdPictureAsPdf } from "react-icons/md";
 import Editor from "@monaco-editor/react";
 import { useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-export default function ResultSection({ response, loading, originalCode }) {
+export default function ResultSection({
+  response,
+  loading,
+  originalCode,
+  reviewId,
+}) {
   const [openExportWindow, setOpenExportWindow] = useState(false);
   const [outputType, setOutputType] = useState("pdf");
 
@@ -261,6 +273,71 @@ export default function ResultSection({ response, loading, originalCode }) {
 
           {/* Export Format Options */}
           <div className="space-y-3">
+            {/* Share Publicly Option */}
+            {reviewId ? (
+              <div className="p-4 rounded-xl border border-green-500/30 cursor-default group">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <FiShare2 className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-medium text-white">
+                        Share Publicly
+                      </span>
+                      <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-semibold">
+                        Public Link
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-400 mb-3">
+                      Share your code review with others via a direct link
+                    </p>
+                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/60 border border-gray-700/50">
+                      <code className="flex-1 text-xs text-gray-300 truncate font-mono">
+                        {`${window.location.origin}/share/${reviewId}`}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(
+                            `${window.location.origin}/share/${reviewId}`,
+                          );
+                          toast.success("Link copied to clipboard!", {
+                            duration: 2000,
+                            icon: "✓",
+                          });
+                        }}
+                        className="px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-500 text-white transition-colors flex items-center gap-1.5 shrink-0 text-sm font-medium cursor-pointer"
+                      >
+                        <FiCopy className="w-4 h-4" />
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl border border-gray-600/30 bg-gray-900/40 cursor-not-allowed">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-gray-600/20 flex items-center justify-center shrink-0 mt-0.5">
+                    <FiShare2 className="w-5 h-5 text-gray-500" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-medium text-gray-400">
+                        Share Publicly
+                      </span>
+                      <span className="px-2 py-1 rounded-full bg-gray-700/50 text-gray-400 text-xs font-semibold">
+                        Not Available
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Save your review to enable public sharing
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* PDF Option */}
             <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
               <input
@@ -286,32 +363,33 @@ export default function ResultSection({ response, loading, originalCode }) {
                 <div className="w-2 h-2 rounded-full bg-blue-500"></div>
               )}
             </label>
-          </div>
-          {/* JSON Option */}
-          <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
-            <input
-              type="radio"
-              name="export"
-              value="json"
-              onChange={(e) => setOutputType(e.target.value)}
-              checked={outputType === "json"}
-              className="w-4 h-4 accent-blue-500"
-            />
-            <div className="ml-4 flex-1">
-              <div className="flex items-center gap-2">
-                <MdDataObject className="w-5 h-5 text-blue-400" />
-                <span className="font-medium text-white group-hover:text-blue-400">
-                  JSON Format
-                </span>
+
+            {/* JSON Option */}
+            <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
+              <input
+                type="radio"
+                name="export"
+                value="json"
+                onChange={(e) => setOutputType(e.target.value)}
+                checked={outputType === "json"}
+                className="w-4 h-4 accent-blue-500"
+              />
+              <div className="ml-4 flex-1">
+                <div className="flex items-center gap-2">
+                  <MdDataObject className="w-5 h-5 text-blue-400" />
+                  <span className="font-medium text-white group-hover:text-blue-400">
+                    JSON Format
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Structured data format for integration and processing
+                </p>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Structured data format for integration and processing
-              </p>
-            </div>
-            {outputType === "json" && (
-              <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-            )}
-          </label>
+              {outputType === "json" && (
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+              )}
+            </label>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3 pt-2">

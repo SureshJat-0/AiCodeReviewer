@@ -1,14 +1,16 @@
 import axios from "axios";
 import { useState } from "react";
 import { useContext, createContext } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(localStorage.getItem("user"));
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
+  const navigate = useNavigate();
 
   const signup = async (userInfo) => {
     try {
@@ -17,7 +19,7 @@ export function AuthProvider({ children }) {
         return console.log("All fields are required");
       }
       const response = await axios.post(
-        "http://localhost:3000/api/auth/signup",
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`,
         userInfo,
         { withCredentials: true },
       );
@@ -36,7 +38,7 @@ export function AuthProvider({ children }) {
         toast.error("All fields are required");
       }
       const response = await axios.post(
-        "http://localhost:3000/api/auth/login",
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
         userInfo,
         { withCredentials: true },
       );
@@ -46,6 +48,7 @@ export function AuthProvider({ children }) {
       setToken(token);
       setUser(user);
       toast.success("Login Success");
+      navigate("/");
     } catch (err) {
       toast.error(
         err?.response?.data?.error?.message || "Something went wrong",
@@ -58,6 +61,7 @@ export function AuthProvider({ children }) {
     localStorage.removeItem("user");
     setUser(null);
     setToken(null);
+    toast.success("User signed out");
   };
 
   return (

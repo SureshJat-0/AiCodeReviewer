@@ -1,65 +1,42 @@
-import { useEffect, useState } from "react";
-import { useLocation, useParams, Link } from "react-router-dom";
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import { HiExclamation } from "react-icons/hi";
 import { FiChevronLeft } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import ResultSection from "../components/ResultSection";
-import { useAuth } from "../contexts/auth";
 import axios from "axios";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 
-export default function HistoryReview() {
+export default function PublicReview() {
   const [historyItem, setHistoryItem] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { historyId } = useParams();
-  const location = useLocation();
-  const { user } = useAuth();
+  const { reviewId } = useParams();
+
+  const getPublicReview = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/review/${reviewId}`,
+        {
+          withCredentials: true,
+        },
+      );
+      setHistoryItem(res.data || null);
+    } catch (err) {
+      toast.error(
+        err.response.data.error.message ||
+          "History you requested for does not exist",
+        { id: "review-mongo-err-toast" },
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setLoading(true);
-    const historyState = location?.state?.history;
-    if (historyState) {
-      // if history is in state
-      setHistoryItem(historyState);
-      setLoading(false);
-      return;
-    }
-    if (user) {
-      axios
-        .get(`${import.meta.env.VITE_API_BASE_URL}/api/review/${historyId}`)
-        .then((res) => {
-          setHistoryItem(res.data || null);
-        })
-        .catch((err) => {
-          toast.error(
-            err.response.data.error.message ||
-              "History you requested for does not exist",
-            { id: "review-mongo-err-toast" },
-          );
-          console.log(err);
-        });
-    } else {
-      const storedHistory = localStorage.getItem("history");
-      if (!storedHistory) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const parsedHistory = JSON.parse(storedHistory);
-        if (Array.isArray(parsedHistory)) {
-          const history = parsedHistory.find((h) => h.id === historyId);
-          if (!history)
-            toast.error("History you requested for does not exits", {
-              id: "review-local-err-toast",
-            });
-          setHistoryItem(history || null);
-        }
-      } catch (err) {
-        setHistoryItem(null);
-      }
-    }
-    setLoading(false);
-  }, [historyId, location.state]);
+    getPublicReview();
+  }, []);
 
   if (loading) {
     return (
@@ -132,7 +109,7 @@ export default function HistoryReview() {
           response={historyItem?.output}
           loading={loading}
           originalCode={historyItem?.input}
-          reviewId={user ? historyId : null}
+          reviewId={reviewId}
         />
       </div>
     </main>

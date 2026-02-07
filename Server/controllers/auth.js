@@ -40,7 +40,7 @@ const login = async (req, res) => {
     if (!isMatch) throw new CustomExpressError(400, "Invalid Credentials");
     const token = getToken(user);
     res.status(200).json({
-      user: { id: user._id, fullName: user.fullName, email: user.email },
+      user: { _id: user._id, fullName: user.fullName, email: user.email },
       token,
     });
   } catch (err) {

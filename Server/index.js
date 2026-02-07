@@ -7,12 +7,13 @@ import cors from "cors";
 
 import { aiRouter } from "./routes/aiCommunication.js";
 import authRouter from "./routes/authRouter.js";
+import reviewRouter from "./routes/review.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 var corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.CLIENT_URL,
   credentials: true,
 };
 
@@ -22,7 +23,7 @@ app.use(cors(corsOptions));
 
 // mongoDb connect
 mongoose
-  .connect("mongodb://127.0.0.1:27017/aiCodeReviewer")
+  .connect(`${process.env.MONGO_URI}/aiCodeReviewer`)
   .then(() => {
     console.log("MongoDb Connected!");
   })
@@ -31,6 +32,7 @@ mongoose
 // Routers
 app.use("/api/ai", aiRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/review", reviewRouter);
 
 // error handler
 app.use((err, req, res, next) => {

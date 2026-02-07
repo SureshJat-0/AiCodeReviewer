@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Editor from "@monaco-editor/react";
+import { useAuth } from "../contexts/auth";
 import { useRef } from "react";
 import { generate } from "short-uuid";
 import { toast } from "react-hot-toast";
@@ -16,9 +17,11 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState(0);
   const [githubUrl, setGithubUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
+  const [reviewId, setReviewId] = useState(null);
   const [code, setCode] = useState(
     "// Paste your code here to get an AI review\n",
   );
+  const { user } = useAuth();
 
   const editorRef = useRef(null);
 
@@ -62,7 +65,7 @@ const userId = req.query.id;
       setResponse();
       console.log("Getting response...");
       const { data } = await axios.post(
-        "http://localhost:3000/api/ai/response",
+        `${import.meta.env.VITE_API_BASE_URL}/api/ai/response`,
         { code },
         {
           withCredentials: true,
@@ -72,17 +75,10 @@ const userId = req.query.id;
         throw new Error("AI service failed. Please try again later.");
       }
       setResponse(data);
-      // adding history in local storage
-      const history = JSON.parse(localStorage.getItem("history")) || [];
-      const historyItem = {
-        input: code,
-        output: data,
-        id: generate(),
-        timestamp: Date.now(),
-      };
-      const updatedHistory = [...history, historyItem];
-      localStorage.setItem("history", JSON.stringify(updatedHistory));
+      toast.success("Response get sucessfuly.");
       console.log("Get response success");
+      // setting history
+      setHistory(code, data);
     } catch (err) {
       // backend-sent errors
       if (err?.response?.data?.error?.message) {
@@ -95,6 +91,37 @@ const userId = req.query.id;
       console.error(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const setHistory = async (code, data) => {
+    if (user) {
+      // adding response in databse
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/review/new`,
+        { input: code, output: data, userId: user._id },
+        { withCredentials: true },
+      );
+      setReviewId(res.data.id);
+    } else {
+      // adding response in local storage
+      let history = JSON.parse(localStorage.getItem("history")) || [];
+      if (history.length >= 5) {
+        toast(
+          "You can only store 5 responses in history locally. Login to add more responses in the history.",
+        );
+        // remove the latest review from the history and add latest
+        const lastReviewId = history[0]._id;
+        history = history.filter((e) => e._id != lastReviewId);
+      }
+      const historyItem = {
+        input: code,
+        output: data,
+        _id: generate(),
+        createdAt: Date.now(),
+      };
+      history = [...history, historyItem];
+      localStorage.setItem("history", JSON.stringify(history));
     }
   };
 
@@ -112,7 +139,7 @@ const userId = req.query.id;
       const formData = new FormData();
       formData.append("file", selectedFile);
       const response = await axios.post(
-        "http://localhost:3000/api/ai/upload",
+        `${import.meta.env.VITE_API_BASE_URL}/api/ai/upload`,
         formData,
         { withCredentials: true },
       );
@@ -445,6 +472,7 @@ const userId = req.query.id;
             response={response}
             loading={loading}
             originalCode={null}
+            reviewId={reviewId}
           />
         </div>
       </main>

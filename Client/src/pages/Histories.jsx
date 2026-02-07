@@ -3,35 +3,70 @@ import { Link } from "react-router-dom";
 import { FiChevronRight, FiPlus } from "react-icons/fi";
 import { MdDelete, MdHistory } from "react-icons/md";
 import { HiDocumentText } from "react-icons/hi";
+import { useAuth } from "../contexts/auth";
+import axios from "axios";
 
 export default function Histories() {
   const [history, setHistory] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  const getHistory = () => {
+  const getHistoryLocally = () => {
     setLoading(true);
     const history = JSON.parse(localStorage.getItem("history")) || null;
     setHistory(history);
     setLoading(false);
   };
 
-  const deleteHistory = (e, id) => {
+  const getHistoryFromDatabase = async () => {
+    setLoading(true);
+    const historyDbResponse = await axios.get(
+      `${import.meta.env.VITE_API_BASE_URL}/api/review/get/${user._id}`,
+      {
+        withCredentials: true,
+      },
+    );
+    setHistory(historyDbResponse.data);
+    setLoading(false);
+  };
+
+  const deleteHistory = async (e, _id) => {
     e.preventDefault();
-    try {
-      const updatedHistory = history.filter((el) => el.id != id);
-      localStorage.setItem("history", JSON.stringify(updatedHistory));
-      setHistory(updatedHistory);
-    } catch (err) {
-      console.error(err);
+    if (user) {
+      // delete from the database
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/api/review/${user._id}/${_id}`,
+        {
+          withCredentials: true,
+        },
+      );
+      setHistoryForUser();
+    } else {
+      // delete from the local storage
+      try {
+        const updatedHistory = history.filter((el) => el._id != _id);
+        localStorage.setItem("history", JSON.stringify(updatedHistory));
+        setHistory(updatedHistory);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+
+  const setHistoryForUser = async () => {
+    if (user) {
+      getHistoryFromDatabase();
+    } else {
+      getHistoryLocally();
     }
   };
 
   useEffect(() => {
-    getHistory();
-  }, []);
+    setHistoryForUser();
+  }, [user]);
 
   const formatDate = (timestamp) => {
-    return new Date(timestamp).toLocaleString("en-US", {
+    return new Date(timestamp).toLocaleString("en-IN", {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -66,8 +101,8 @@ export default function Histories() {
             </div>
             <h3 className="text-xl font-semibold mb-2">No reviews yet</h3>
             <p className="text-sm text-gray-400 text-center max-w-md mb-6">
-              You haven't run a review yet. Submit your first snippet to see it
-              here.
+              You haven't run a review yet. Submit your first code snippet to
+              see it here.
             </p>
             <Link
               to="/"
@@ -76,12 +111,34 @@ export default function Histories() {
               <FiPlus className="w-4 h-4" />
               Start a review
             </Link>
+            {!user && (
+              <div className="mt-8 p-4 rounded-lg bg-yellow-600/3 border border-yellow-600/30 max-w-md">
+                <p className="text-sm text-gray-300 text-center mb-3">
+                  <span className="font-medium text-yellow-400">
+                    Local storage limit:
+                  </span>{" "}
+                  You can only store up to 5 reviews locally.
+                </p>
+                <p className="text-xs text-gray-400 text-center mb-3">
+                  Sign in to store unlimited reviews and access them from any
+                  device.
+                </p>
+                <div className="flex justify-center">
+                  <Link
+                    to="/login"
+                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
             {[...history].reverse().map((e, index) => (
               <Link
-                to={`/history/${e.id}`}
+                to={`/history/${e._id}`}
                 state={{ history: e }}
                 key={index}
                 className="block"
@@ -101,7 +158,7 @@ export default function Histories() {
                         </p>
                       </div>
                     </div>
-                    <button onClick={(ev) => deleteHistory(ev, e.id)}>
+                    <button onClick={(ev) => deleteHistory(ev, e._id)}>
                       <MdDelete className="w-6 h-6 cursor-pointer text-gray-200" />
                     </button>
                     <FiChevronRight className="w-5 h-5 text-gray-600 group-hover:text-gray-400 transition-colors shrink-0 ml-4" />
@@ -109,7 +166,7 @@ export default function Histories() {
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     <div className="flex items-center gap-1.5">
                       <MdHistory className="w-3.5 h-3.5" />
-                      {formatDate(e.timestamp)}
+                      {formatDate(e.createdAt)}
                     </div>
                     {e.output.bugs && e.output.bugs.length > 0 && (
                       <div className="flex items-center gap-1.5">
@@ -127,6 +184,30 @@ export default function Histories() {
                 </div>
               </Link>
             ))}
+            {!user && (
+              <div className="mt-8 p-6 rounded-xl bg-linear-to-br from-blue-600/2 to-purple-600/2 border border-blue-600/30">
+                <div className="text-center">
+                  <h4 className="text-lg font-semibold text-gray-200 mb-2">
+                    Want to save more reviews?
+                  </h4>
+                  <p className="text-sm text-gray-400 mb-4 max-w-lg mx-auto">
+                    You're currently limited to{" "}
+                    <span className="font-medium text-yellow-400">
+                      5 reviews
+                    </span>{" "}
+                    in local storage. Sign in to unlock unlimited review history
+                    and access your reviews from anywhere.
+                  </p>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-colors"
+                  >
+                    <FiPlus className="w-4 h-4" />
+                    Sign in now
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
