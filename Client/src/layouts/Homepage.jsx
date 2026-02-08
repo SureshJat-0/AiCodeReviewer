@@ -1,4 +1,4 @@
-import Aside from "../components/aside";
+import Aside from "../components/Aside";
 import Review from "../pages/Review";
 
 export default function HomePage() {

@@ -1,4 +1,4 @@
-import Aside from "../components/aside";
+import Aside from "../components/Aside";
 import PublicReview from "../pages/PublicReview";
 
 export default function PublicReviewPage() {

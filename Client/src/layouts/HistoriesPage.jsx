@@ -1,5 +1,5 @@
 import Histories from "../pages/Histories";
-import Aside from "../components/aside";
+import Aside from "../components/Aside";
 
 export default function HistoriesPage() {
   return (

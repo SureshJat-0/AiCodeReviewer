@@ -56,6 +56,6 @@ app.use((req, res) => {
   res.status(404).send("404 - Page not found");
 });
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server started");
 });
