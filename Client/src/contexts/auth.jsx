@@ -3,13 +3,14 @@ import { useState } from "react";
 import { useContext, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
+  const [user, setUser] = useState(null);
+  const [userLoading, setUserLoading] = useState(true);
   const navigate = useNavigate();
 
   const signup = async (userInfo) => {
@@ -18,7 +19,7 @@ export function AuthProvider({ children }) {
         toast.error("All fields are required");
         return console.log("All fields are required");
       }
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`,
         userInfo,
         { withCredentials: true },
@@ -42,30 +43,56 @@ export function AuthProvider({ children }) {
         userInfo,
         { withCredentials: true },
       );
-      const { token, user } = response.data;
-      localStorage.setItem("token", JSON.stringify(token));
-      localStorage.setItem("user", JSON.stringify(user));
-      setToken(token);
-      setUser(user);
+      setUser(response.data.user);
       toast.success("Login Success");
       navigate("/");
     } catch (err) {
+      setUser(null);
       toast.error(
         err?.response?.data?.error?.message || "Something went wrong",
       );
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setToken(null);
-    toast.success("User signed out");
+  const logout = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`,
+        {},
+        {
+          withCredentials: true,
+        },
+      );
+      setUser(null);
+      toast.success("User signed out");
+    } catch (err) {
+      console.error(err);
+      toast.error(
+        err?.response?.data?.error?.message || "Something went wrong",
+      );
+    }
   };
 
+  const checkAuth = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,
+        { withCredentials: true },
+      );
+      setUser(res.data.user);
+    } catch (err) {
+      setUser(null);
+    } finally {
+      setUserLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, token, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, userLoading, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

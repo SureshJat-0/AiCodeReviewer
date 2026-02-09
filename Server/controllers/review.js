@@ -6,17 +6,18 @@ import mongoose from "mongoose";
 const addReview = async (req, res) => {
   try {
     const { input, output, userId } = req.body;
-    const review = { input, output };
     if (!input || !output || !userId)
       throw new CustomExpressError(400, "All fields are required");
-    const DbUser = await User.findById(userId);
-    if (!DbUser) throw new CustomExpressError(400, "User does not exist");
+    const review = { input, output };
+    if (!mongoose.Types.ObjectId.isValid(userId))
+      throw new CustomExpressError(400, "Invalid userId formate");
     const dbReview = await Review.create(review);
-    await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       { $push: { reviews: dbReview } },
       { new: true, runValidators: true },
     );
+    if (!updatedUser) throw new CustomExpressError(400, "User does not exist");
     res.status(201).send({
       status: "success",
       message: "Review added successfully",
@@ -70,6 +71,8 @@ const getReviewsOfUser = async (req, res) => {
   try {
     const { _userId } = req.params;
     if (!_userId) throw new CustomExpressError(400, "User ID is required");
+    if (!mongoose.Types.ObjectId.isValid(_userId))
+      throw new CustomExpressError(400, "Invalid Id formate");
     const user = await User.findById(_userId).populate("reviews");
     const reviews = user.reviews;
     res.status(200).json(reviews);
@@ -87,10 +90,12 @@ const deleteReview = async (req, res) => {
     const { _reviewId, _userId } = req.params;
     if (!_reviewId || !_userId)
       throw new CustomExpressError(400, "Review ID and User ID are required");
+    if (!mongoose.Types.ObjectId.isValid(_reviewId))
+      throw new CustomExpressError(400, "Invalid Id formate");
     const review = await Review.findById(_reviewId);
     if (!review) throw new CustomExpressError(404, "Review not found");
-    const user = await User.findById(_userId);
-    if (!user) throw new CustomExpressError(404, "User not found");
+    if (!mongoose.Types.ObjectId.isValid(_userId))
+      throw new CustomExpressError(400, "Invalid Id formate");
     const updatedUser = await User.findByIdAndUpdate(
       _userId,
       { $pull: { reviews: _reviewId } },

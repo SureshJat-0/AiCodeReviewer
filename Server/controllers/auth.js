@@ -39,9 +39,15 @@ const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new CustomExpressError(400, "Invalid Credentials");
     const token = getToken(user);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
     res.status(200).json({
+      success: true,
       user: { _id: user._id, fullName: user.fullName, email: user.email },
-      token,
     });
   } catch (err) {
     console.error(err);
@@ -61,4 +67,28 @@ function getToken(user) {
   return token;
 }
 
-export { signup, login };
+const logout = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
+  res.status(200).json({ success: true });
+};
+
+const profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.status(200).json({
+      user: { _id: user._id, fullName: user.fullName, email: user.email },
+    });
+  } catch (err) {
+    console.error(err);
+    throw new CustomExpressError(
+      err.statusCode || 500,
+      err.message || "Something went wrong while getting your profile",
+    );
+  }
+};
+
+export { signup, login, logout, profile };

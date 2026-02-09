@@ -4,22 +4,23 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import { aiRouter } from "./routes/aiCommunication.js";
 import authRouter from "./routes/authRouter.js";
 import reviewRouter from "./routes/review.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 var corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,
 };
 
-// For parsing application/json
+// For parsing application/json, cors, cookies
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 // mongoDb connect
 mongoose

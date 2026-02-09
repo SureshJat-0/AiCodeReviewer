@@ -10,13 +10,13 @@ import toast from "react-hot-toast";
 
 export default function HistoryReview() {
   const [historyItem, setHistoryItem] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { historyId } = useParams();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, userLoading } = useAuth();
 
   useEffect(() => {
-    setLoading(true);
+    if (userLoading) return;
     const historyState = location?.state?.history;
     if (historyState) {
       // if history is in state
@@ -31,12 +31,12 @@ export default function HistoryReview() {
           setHistoryItem(res.data || null);
         })
         .catch((err) => {
+          console.error(err);
           toast.error(
             err.response.data.error.message ||
               "History you requested for does not exist",
             { id: "review-mongo-err-toast" },
           );
-          console.log(err);
         });
     } else {
       const storedHistory = localStorage.getItem("history");
@@ -59,9 +59,9 @@ export default function HistoryReview() {
       }
     }
     setLoading(false);
-  }, [historyId, location.state]);
+  }, [user, userLoading, historyId, location.state]);
 
-  if (loading) {
+  if (loading || userLoading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-screen bg-[#0f0f0f] text-gray-100">
         <div className="flex flex-col items-center gap-6">
@@ -79,8 +79,7 @@ export default function HistoryReview() {
         </div>
       </div>
     );
-  }
-  if (!historyItem) {
+  } else if (!historyItem) {
     return (
       <div className="text-center flex-1 my-auto">
         <div className="w-20 h-20 rounded-2xl bg-red-600/20 border border-red-600/30 flex items-center justify-center mx-auto mb-6">

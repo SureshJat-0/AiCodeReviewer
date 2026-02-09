@@ -105,7 +105,7 @@ export default function Aside() {
             <button
               onClick={logout}
               aria-label="Sign In"
-              className="w-full px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 justify-center"
+              className="w-full px-3 py-2 cursor-pointer rounded-md bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium transition-colors flex items-center gap-2 justify-center"
             >
               <BiLogOut className="w-4 h-4" />
               Sign Out
