@@ -24,7 +24,7 @@ export function AuthProvider({ children }) {
         userInfo,
         { withCredentials: true },
       );
-      toast.success("User registerd");
+      toast.success("User registered");
       await login({ email: userInfo.email, password: userInfo.password });
     } catch (err) {
       toast.error(
