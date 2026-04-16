@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 // mongoDb connect
 mongoose
-  .connect(`${process.env.MONGO_URI}/aiCodeReviewer`)
+  .connect(`${process.env.MONGO_URI}`)
   .then(() => {
     console.log("MongoDb Connected!");
   })
