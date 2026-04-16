@@ -1,0 +1,32 @@
+services:
+  server:
+    build: ./Server
+    container_name: aiCodeReviewer_server
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Server/docker.env
+    depends_on:
+      - mongo
+
+  client:
+    build: ./Client
+    container_name: aiCodeReviewer_client
+    ports:
+      - "80:80"
+    env_file:
+      - ./Client/docker.env
+    depends_on:
+      - server
+  
+  mongo:
+    image: mongo
+    container_name: aiCodeReviewer_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - "aiCodeReviewerDatabase:/data/db"
+    restart: unless-stopped
+
+volumes:
+  aiCodeReviewerDatabase:

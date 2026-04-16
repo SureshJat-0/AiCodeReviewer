@@ -1,7 +1,7 @@
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import HistoryReviewPage from "./layouts/HistoryReviewPage";
-import HomePage from "./layouts/Homepage";
+import HomePage from "./layouts/HomePage";
 import HistoriesPage from "./layouts/HistoriesPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
