@@ -1,4 +1,4 @@
-# Production 2 stage setup
+# Production: 2 stage setup
 
 FROM node:22 AS build
 

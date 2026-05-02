@@ -1,6 +1,6 @@
 services:
   server:
-    build: ./Server
+    image: sureshjat0/ai-code-reviewer:server # Hub image
     container_name: aiCodeReviewer_server
     ports:
       - "3000:3000"
@@ -10,7 +10,7 @@ services:
       - mongo
 
   client:
-    build: ./Client
+    image: sureshjat0/ai-code-reviewer:client # Hub image
     container_name: aiCodeReviewer_client
     ports:
       - "80:80"
@@ -18,7 +18,7 @@ services:
       - ./Client/docker.env
     depends_on:
       - server
-  
+
   mongo:
     image: mongo
     container_name: aiCodeReviewer_mongo
