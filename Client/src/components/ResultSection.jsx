@@ -582,22 +582,24 @@ export default function ResultSection({
                   <h2 className="text-xl font-bold">Original Code</h2>
                 </div>
                 <div className="p-2">
-                  <Editor
-                    height="60vh"
-                    defaultLanguage="javascript"
-                    value={originalCode}
-                    theme="vs-dark"
-                    options={{
-                      readOnly: true,
-                      minimap: { enabled: false },
-                      fontSize: 14,
-                      lineNumbers: "on",
-                      roundedSelection: true,
-                      scrollBeyondLastLine: true,
-                      automaticLayout: true,
-                      padding: { top: 16, bottom: 16 },
-                    }}
-                  />
+                  <div className="h-[40vh] md:h-[60vh]">
+                    <Editor
+                      height="100%"
+                      defaultLanguage="javascript"
+                      value={originalCode}
+                      theme="vs-dark"
+                      options={{
+                        readOnly: true,
+                        minimap: { enabled: false },
+                        fontSize: 14,
+                        lineNumbers: "on",
+                        roundedSelection: true,
+                        scrollBeyondLastLine: true,
+                        automaticLayout: true,
+                        padding: { top: 16, bottom: 16 },
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -620,22 +622,24 @@ export default function ResultSection({
                 </button>
               </div>
               <div className="p-2">
-                <Editor
-                  height="50vh"
-                  defaultLanguage="javascript"
-                  value={response?.improvedCode}
-                  theme="vs-dark"
-                  options={{
-                    readOnly: true,
-                    minimap: { enabled: false },
-                    fontSize: 14,
-                    lineNumbers: "on",
-                    roundedSelection: true,
-                    scrollBeyondLastLine: true,
-                    automaticLayout: true,
-                    padding: { top: 16, bottom: 16 },
-                  }}
-                />
+                <div className="h-[35vh] md:h-[50vh]">
+                  <Editor
+                    height="100%"
+                    defaultLanguage="javascript"
+                    value={response?.improvedCode}
+                    theme="vs-dark"
+                    options={{
+                      readOnly: true,
+                      minimap: { enabled: false },
+                      fontSize: 14,
+                      lineNumbers: "on",
+                      roundedSelection: true,
+                      scrollBeyondLastLine: true,
+                      automaticLayout: true,
+                      padding: { top: 16, bottom: 16 },
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
