@@ -6,6 +6,7 @@ import HistoriesPage from "./layouts/HistoriesPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import PublicReviewPage from "./layouts/PublicReviewPage";
+import Google from "./contexts/google";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/history" element={<HistoriesPage />} />
         <Route path="/history/:historyId" element={<HistoryReviewPage />} />
         <Route path="/share/:reviewId" element={<PublicReviewPage />} />
+        <Route path="/auth/google/success" element={<Google />} />
       </Routes>
     </>
   );

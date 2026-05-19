@@ -9,11 +9,17 @@ import cookieParser from "cookie-parser";
 import { aiRouter } from "./routes/aiCommunication.js";
 import authRouter from "./routes/authRouter.js";
 import reviewRouter from "./routes/review.js";
+import OAuthRouter from "./routes/oauth.js";
 
 const app = express();
 
 var corsOptions = {
-  origin: process.env.CLIENT_URL,
+  origin: [
+    process.env.CLIENT_URL,
+    "https://accounts.google.com",
+    "https://oauth2.googleapis.com",
+    "https://www.googleapis.com",
+  ],
   credentials: true,
 };
 
@@ -33,6 +39,7 @@ mongoose
 // Routers
 app.use("/api/ai", aiRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/auth/google", OAuthRouter);
 app.use("/api/review", reviewRouter);
 
 // error handler

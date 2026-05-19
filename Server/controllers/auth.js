@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 const signup = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
-    if (!fullName || !email || !password)
+    if (!fullName.trim() || !email || !password.trim())
       throw new CustomExpressError(400, "All fields are required");
     const user = await User.findOne({ email });
     if (user)
@@ -32,7 +32,7 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    if (!email || !password)
+    if (!email || !password.trim())
       throw new CustomExpressError(400, "All fields are required");
     const user = await User.findOne({ email });
     if (!user) throw new CustomExpressError(400, "Invalid Credentials");
@@ -91,4 +91,4 @@ const profile = async (req, res) => {
   }
 };
 
-export { signup, login, logout, profile };
+export { signup, login, logout, profile, getToken };
