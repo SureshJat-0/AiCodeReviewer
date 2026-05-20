@@ -39,7 +39,7 @@ mongoose
 // Routers
 app.use("/api/ai", aiRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/auth/google", OAuthRouter);
+app.use("/api/oauth", OAuthRouter);
 app.use("/api/review", reviewRouter);
 
 // error handler

@@ -233,7 +233,7 @@ export default function Aside() {
                 type="button"
                 onClick={logout}
                 aria-label="Sign Out"
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
               >
                 <BiLogOut className="h-4 w-4" />
                 Sign Out

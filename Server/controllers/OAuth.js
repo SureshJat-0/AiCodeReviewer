@@ -1,21 +1,20 @@
 import axios from "axios";
-
-const redirectOAuth = (req, res) => {
-  const redirectUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.OAUTH_REDIRECT_URI}&response_type=code&scope=openid email profile`;
-  res.redirect(redirectUrl);
-};
-
 import User from "../models/user.js";
 import { getToken } from "./auth.js";
+
+const redirectOAuth = (req, res) => {
+  const redirectUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_OAUTH_REDIRECT_URI}&response_type=code&scope=openid email profile`;
+  res.redirect(redirectUrl);
+};
 
 const OAuthCallback = async (req, res) => {
   const { code } = req.query;
 
   const tokenRes = await axios.post("https://oauth2.googleapis.com/token", {
     code,
-    client_id: process.env.CLIENT_ID,
-    client_secret: process.env.CLIENT_SECRET,
-    redirect_uri: process.env.OAUTH_REDIRECT_URI,
+    client_id: process.env.GOOGLE_CLIENT_ID,
+    client_secret: process.env.GOOGLE_CLIENT_SECRET,
+    redirect_uri: process.env.GOOGLE_OAUTH_REDIRECT_URI,
     grant_type: "authorization_code",
   });
 
@@ -31,6 +30,8 @@ const OAuthCallback = async (req, res) => {
     user = await User.create({
       email: userInfo.data.email,
       fullName: userInfo.data.name,
+      oauthProvider: "google",
+      oauthId: userInfo.data.id,
       reviews: [],
     });
   }
@@ -43,8 +44,65 @@ const OAuthCallback = async (req, res) => {
   });
 
   res.redirect(
-    `http://localhost:5173/auth/google/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
+    `http://localhost:5173/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
+  );
+};
+const gitHubRedirectOAuth = (req, res) => {
+  const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${process.env.GITHUB_OAUTH_REDIRECT_URI}`;
+  res.redirect(redirectUrl);
+};
+
+const gitHubOAuthCallback = async (req, res) => {
+  const { code } = req.query;
+
+  const tokenRes = await axios.post(
+    "https://github.com/login/oauth/access_token",
+    {
+      code,
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      redirect_uri: process.env.GITHUB_OAUTH_REDIRECT_URI,
+    },
+    {
+      headers: {
+        Accept: "application/json",
+      },
+    },
+  );
+
+  const { access_token } = tokenRes.data;
+
+  const userInfo = await axios.get("https://api.github.com/user", {
+    headers: { Authorization: `Bearer ${access_token}` },
+  });
+
+  let user = await User.findOne({ email: userInfo.data.email });
+  if (!user) {
+    user = await User.create({
+      email: userInfo.data.email,
+      fullName: userInfo.data.login,
+      oauthProvider: "github",
+      oauthId: userInfo.data.id,
+      reviews: [],
+    });
+  }
+
+  const jwt_token = getToken(user);
+  res.cookie("token", jwt_token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.redirect(
+    `http://localhost:5173/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
   );
 };
 
-export { redirectOAuth, OAuthCallback };
+export {
+  redirectOAuth,
+  OAuthCallback,
+  gitHubRedirectOAuth,
+  gitHubOAuthCallback,
+};

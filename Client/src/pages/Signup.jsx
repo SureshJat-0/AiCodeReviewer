@@ -205,52 +205,6 @@ export default function Signup() {
               </div>
             </div>
 
-            {/* Confirm Password Input */}
-            {/* <div>
-              <label className="block text-sm font-medium mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 bg-[#1a1a1a] border border-gray-800 rounded-lg text-gray-100 placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:bg-[#1e1e1e] transition-all"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
-                >
-                  {showConfirmPassword ? (
-                    <FiEyeOff className="w-5 h-5" />
-                  ) : (
-                    <FiEye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-            </div> */}
-
-            {/* Terms & Conditions */}
-            {/* <label className="flex items-start gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                className="w-4 h-4 bg-[#1a1a1a] border border-gray-800 rounded cursor-pointer mt-1"
-              />
-              <span className="text-gray-400 text-sm">
-                I agree to the{" "}
-                <a href="#" className="text-blue-500 hover:text-blue-400">
-                  Terms of Service
-                </a>{" "}
-                and{" "}
-                <a href="#" className="text-blue-500 hover:text-blue-400">
-                  Privacy Policy
-                </a>
-              </span>
-            </label> */}
-
             {/* Signup Button */}
             <button
               type="submit"
@@ -276,6 +230,9 @@ export default function Signup() {
           {/* Social Signup */}
           <div className="grid grid-cols-2 gap-3">
             <button
+              onClick={() =>
+                (window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api/oauth/google`)
+              }
               type="button"
               className="px-4 py-2.5 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center justify-center gap-2"
             >
@@ -283,6 +240,9 @@ export default function Signup() {
               Google
             </button>
             <button
+              onClick={() =>
+                (window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api/oauth/github`)
+              }
               type="button"
               className="px-4 py-2.5 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center justify-center gap-2"
             >
