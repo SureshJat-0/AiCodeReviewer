@@ -1,22 +1,28 @@
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import axios from "axios";
 import { useAuth } from "./auth";
+import { useNavigate } from "react-router-dom";
 
-export default function Google() {
+export default function OAuth() {
   const { setUser } = useAuth();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const _id = params.get("_id");
-    const email = params.get("email");
-    const fullName = params.get("fullName");
-    if (!_id || !email || !fullName) {
-      toast.error("parameters are required");
-      window.location.href = "/";
-      return;
+    async function getUser() {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,
+        { withCredentials: true },
+      );
+      if (!res.data) {
+        console.log("Failed to login");
+        return;
+      }
+      setUser(res.data.user);
+      navigate("/");
     }
-    setUser({ _id, email, fullName });
-    window.history.replaceState({}, "", "/");
-    window.location.href = "/";
+    getUser();
   }, []);
+
   return <div>Loading...</div>;
 }

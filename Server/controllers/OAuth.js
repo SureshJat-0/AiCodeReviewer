@@ -43,9 +43,7 @@ const OAuthCallback = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect(
-    `${process.env.CLIENT_URL}/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
-  );
+  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
 };
 const gitHubRedirectOAuth = (req, res) => {
   const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${process.env.GITHUB_OAUTH_REDIRECT_URI}`;
@@ -95,9 +93,7 @@ const gitHubOAuthCallback = async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  res.redirect(
-    `${process.env.CLIENT_URL}/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
-  );
+  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
 };
 
 export {
