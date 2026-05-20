@@ -44,7 +44,7 @@ const OAuthCallback = async (req, res) => {
   });
 
   res.redirect(
-    `http://localhost:5173/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
+    `${process.env.CLIENT_URL}/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
   );
 };
 const gitHubRedirectOAuth = (req, res) => {
@@ -96,7 +96,7 @@ const gitHubOAuthCallback = async (req, res) => {
   });
 
   res.redirect(
-    `http://localhost:5173/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
+    `${process.env.CLIENT_URL}/auth/oauth/success?_id=${user._id.toString()}&email=${user.email}&fullName=${user.fullName}`,
   );
 };
 
