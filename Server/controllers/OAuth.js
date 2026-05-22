@@ -39,7 +39,7 @@ const OAuthCallback = async (req, res) => {
   res.cookie("token", jwt_token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: "none", // client and server are on different domain for production
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 

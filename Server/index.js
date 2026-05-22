@@ -14,12 +14,7 @@ import OAuthRouter from "./routes/oauth.js";
 const app = express();
 
 var corsOptions = {
-  origin: [
-    process.env.CLIENT_URL,
-    "https://accounts.google.com",
-    "https://oauth2.googleapis.com",
-    "https://www.googleapis.com",
-  ],
+  origin: process.env.CLIENT_URL,
   credentials: true,
 };
 
