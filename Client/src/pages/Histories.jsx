@@ -19,28 +19,34 @@ export default function Histories() {
   };
 
   const getHistoryFromDatabase = async () => {
-    setLoading(true);
-    const historyDbResponse = await axios.get(
-      `${import.meta.env.VITE_API_BASE_URL}/api/review/get/${user._id}`,
-      {
-        withCredentials: true,
-      },
-    );
-    setHistory(historyDbResponse.data);
-    setLoading(false);
+    try {
+      const historyDbResponse = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/review/get/${user._id}`,
+        {
+          withCredentials: true,
+        },
+      );
+      setHistory(historyDbResponse.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const deleteHistory = async (e, _id) => {
     e.preventDefault();
     if (user) {
       // delete from the database
-      await axios.delete(
-        `${import.meta.env.VITE_API_BASE_URL}/api/review/${user._id}/${_id}`,
-        {
-          withCredentials: true,
-        },
-      );
-      setHistoryForUser();
+      try {
+        await axios.delete(
+          `${import.meta.env.VITE_API_BASE_URL}/api/review/${user._id}/${_id}`,
+          {
+            withCredentials: true,
+          },
+        );
+        setHistoryForUser();
+      } catch (err) {
+        console.log(err);
+      }
     } else {
       // delete from the local storage
       try {
@@ -54,11 +60,13 @@ export default function Histories() {
   };
 
   const setHistoryForUser = async () => {
+    setLoading(true);
     if (user) {
       getHistoryFromDatabase();
     } else {
       getHistoryLocally();
     }
+    setLoading(false);
   };
 
   useEffect(() => {

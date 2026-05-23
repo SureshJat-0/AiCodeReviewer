@@ -12,9 +12,9 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/" element={<HomePage />} />
         <Route path="/history" element={<HistoriesPage />} />
         <Route path="/history/:historyId" element={<HistoryReviewPage />} />
         <Route path="/share/:reviewId" element={<PublicReviewPage />} />

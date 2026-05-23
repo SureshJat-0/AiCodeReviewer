@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
         return console.log("All fields are required");
       }
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`,
+        `/api/auth/signup`,
         userInfo,
         { withCredentials: true },
       );
@@ -38,8 +38,8 @@ export function AuthProvider({ children }) {
       if (!userInfo.email || !userInfo.password) {
         toast.error("All fields are required");
       }
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
+      let response = await axios.post(
+        `/api/auth/login`,
         userInfo,
         { withCredentials: true },
       );
@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`,
+        `/api/auth/logout`,
         {},
         {
           withCredentials: true,
@@ -75,10 +75,20 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,
+      let res = await axios.get(
+        `/api/auth/me`,
         { withCredentials: true },
       );
+      if (res.status === 401) {
+        await axios.get(
+          `/api/auth/refresh`,
+          { withCredentials: true },
+        );
+        res = await axios.get(
+          `/api/auth/me`,
+          { withCredentials: true },
+        );
+      }
       setUser(res.data.user);
     } catch (err) {
       setUser(null);

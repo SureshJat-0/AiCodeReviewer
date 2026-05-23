@@ -37,17 +37,22 @@ const login = async (req, res) => {
     if (!user) throw new CustomExpressError(400, "Invalid Credentials");
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new CustomExpressError(400, "Invalid Credentials");
-    const token = getToken(user);
-    res.cookie("token", token, {
+    const accessToken = getAccessToken(user._id);
+    const refreshToken = getRefreshToken(user._id);
+    const cookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-    res.status(200).json({
-      success: true,
-      user: { _id: user._id, fullName: user.fullName, email: user.email },
-    });
+    };
+    res
+      .cookie("accessToken", accessToken, cookieOptions)
+      .cookie("refreshToken", refreshToken, cookieOptions)
+      .status(200)
+      .json({
+        success: true,
+        user: { _id: user._id, fullName: user.fullName, email: user.email },
+      });
   } catch (err) {
     console.error(err);
     throw new CustomExpressError(
@@ -57,27 +62,75 @@ const login = async (req, res) => {
   }
 };
 
-function getToken(user) {
+async function refreshAccessToken(req, res) {
+  try {
+    const incomingRefreshToken = req.cookies.refreshToken;
+    if (!incomingRefreshToken)
+      throw new CustomExpressError(401, "Refresh token missing");
+
+    const decoded = await jwt.verify(
+      incomingRefreshToken,
+      process.env.JWT_REFRESH_SECRET_KEY,
+    );
+
+    // skip DB step for now
+
+    const newAccessToken = getAccessToken(decoded.userId);
+    const newRefreshToekn = getRefreshToken(decoded.userId);
+
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    res
+      .cookie("accessToken", newRefreshToekn, cookieOptions)
+      .cookie("refreshToken", newRefreshToekn, cookieOptions)
+      .json({ message: "Token refreshed" });
+  } catch (err) {
+    console.error(err);
+    throw new CustomExpressError(
+      err.statusCode || 500,
+      err.message || "Something went wrong",
+    );
+  }
+}
+
+function getAccessToken(userId) {
   const token = jwt.sign(
-    { id: user._id, fullName: user.fullName, email: user.email },
-    process.env.JWT_SECRET_KEY,
-    { expiresIn: "30d" },
+    { userId },
+    process.env.JWT_ACCESS_SECRET_KEY,
+    { expiresIn: 15 * 60 * 1000 }, // 15 mins
+  );
+  return token;
+}
+function getRefreshToken(userId) {
+  const token = jwt.sign(
+    { userId },
+    process.env.JWT_REFRESH_SECRET_KEY,
+    { expiresIn: 7 * 24 * 60 * 60 * 1000 }, // 7 days
   );
   return token;
 }
 
 const logout = async (req, res) => {
-  res.clearCookie("token", {
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-  });
-  res.status(200).json({ success: true });
+    sameSite: "none",
+  };
+  res
+    .clearCookie("accessToken", cookieOptions)
+    .clearCookie("refreshToken", cookieOptions)
+    .status(200)
+    .json({ success: true });
 };
 
 const profile = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.userId);
     res.status(200).json({
       user: { _id: user._id, fullName: user.fullName, email: user.email },
     });
@@ -90,4 +143,12 @@ const profile = async (req, res) => {
   }
 };
 
-export { signup, login, logout, profile, getToken };
+export {
+  signup,
+  login,
+  logout,
+  profile,
+  getAccessToken,
+  getRefreshToken,
+  refreshAccessToken,
+};

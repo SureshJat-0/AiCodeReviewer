@@ -1,6 +1,6 @@
 import axios from "axios";
 import User from "../models/user.js";
-import { getToken } from "./auth.js";
+import { getAccessToken, getRefreshToken } from "./auth.js";
 
 const redirectOAuth = (req, res) => {
   const redirectUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_OAUTH_REDIRECT_URI}&response_type=code&scope=openid email profile`;
@@ -35,15 +35,20 @@ const OAuthCallback = async (req, res) => {
       reviews: [],
     });
   }
-  const jwt_token = getToken(user);
-  res.cookie("token", jwt_token, {
+
+  const jwt_access_token = getAccessToken(user._id);
+  const jwt_refresh_token = getRefreshToken(user._id);
+
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "none", // client and server are on different domain for production
     maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
-
-  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
+  };
+  res
+    .cookie("accessToken", jwt_access_token, cookieOptions)
+    .cookie("refreshToken", jwt_refresh_token, cookieOptions)
+    .redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
 };
 const gitHubRedirectOAuth = (req, res) => {
   const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${process.env.GITHUB_OAUTH_REDIRECT_URI}`;
@@ -85,15 +90,20 @@ const gitHubOAuthCallback = async (req, res) => {
     });
   }
 
-  const jwt_token = getToken(user);
-  res.cookie("token", jwt_token, {
+  const jwt_access_token = getAccessToken(user._id);
+  const jwt_refresh_token = getRefreshToken(user._id);
+
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    sameSite: "none", // client and server are on different domain for production
     maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  };
 
-  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
+  res
+    .cookie("accessToken", jwt_access_token, cookieOptions)
+    .cookie("refreshToken", jwt_refresh_token, cookieOptions)
+    .redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
 };
 
 export {
