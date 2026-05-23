@@ -1,12 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/api/:path*",
+      "destination": "https://aicodereviewer-uynz.onrender.com/:path*"
     },
     {
-      "source": "/api/:path*",
-      "destination": "http://localhost:3000/:path*"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
