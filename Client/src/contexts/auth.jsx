@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
         toast.error("All fields are required");
       }
       let response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/login`,
+        `/api/auth/login`,
         userInfo,
         { withCredentials: true },
       );
@@ -57,7 +57,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/logout`,
+        `/api/auth/logout`,
         {},
         {
           withCredentials: true,
@@ -76,16 +76,16 @@ export function AuthProvider({ children }) {
   const checkAuth = async () => {
     try {
       let res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,
+        `/api/auth/me`,
         { withCredentials: true },
       );
       if (res.status === 401) {
         await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh`,
+          `/api/auth/refresh`,
           { withCredentials: true },
         );
         res = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,
+          `/api/auth/me`,
           { withCredentials: true },
         );
       }

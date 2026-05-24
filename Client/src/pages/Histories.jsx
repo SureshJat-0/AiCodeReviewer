@@ -20,6 +20,7 @@ export default function Histories() {
 
   const getHistoryFromDatabase = async () => {
     try {
+      setLoading(true);
       const historyDbResponse = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/api/review/get/${user._id}`,
         {
@@ -29,6 +30,8 @@ export default function Histories() {
       setHistory(historyDbResponse.data);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,13 +63,11 @@ export default function Histories() {
   };
 
   const setHistoryForUser = async () => {
-    setLoading(true);
     if (user) {
       getHistoryFromDatabase();
     } else {
       getHistoryLocally();
     }
-    setLoading(false);
   };
 
   useEffect(() => {
