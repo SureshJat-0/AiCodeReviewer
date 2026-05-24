@@ -47,9 +47,11 @@ const OAuthCallback = async (req, res) => {
   };
   res
     .cookie("accessToken", jwt_access_token, cookieOptions)
-    .cookie("refreshToken", jwt_refresh_token, cookieOptions)
-    .redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
+    .cookie("refreshToken", jwt_refresh_token, cookieOptions);
+
+  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
 };
+
 const gitHubRedirectOAuth = (req, res) => {
   const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${process.env.GITHUB_OAUTH_REDIRECT_URI}`;
   res.redirect(redirectUrl);
@@ -102,8 +104,9 @@ const gitHubOAuthCallback = async (req, res) => {
 
   res
     .cookie("accessToken", jwt_access_token, cookieOptions)
-    .cookie("refreshToken", jwt_refresh_token, cookieOptions)
-    .redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
+    .cookie("refreshToken", jwt_refresh_token, cookieOptions);
+
+  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
 };
 
 export {
