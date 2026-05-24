@@ -26,7 +26,7 @@ export default function HistoryReview() {
     }
     if (user) {
       axios
-        .get(`${import.meta.env.VITE_API_BASE_URL}/api/review/${historyId}`)
+        .get(`/api/review/${historyId}`)
         .then((res) => {
           setHistoryItem(res.data || null);
         })

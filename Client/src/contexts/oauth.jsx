@@ -10,10 +10,7 @@ export default function OAuth() {
 
   useEffect(() => {
     async function getUser() {
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/me`,
-        { withCredentials: true },
-      );
+      const res = await axios.get(`/api/auth/me`, { withCredentials: true });
       if (!res.data) {
         console.log("Failed to login");
         return;

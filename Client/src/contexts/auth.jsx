@@ -19,11 +19,7 @@ export function AuthProvider({ children }) {
         toast.error("All fields are required");
         return console.log("All fields are required");
       }
-      await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/auth/signup`,
-        userInfo,
-        { withCredentials: true },
-      );
+      await axios.post(`/api/auth/signup`, userInfo, { withCredentials: true });
       toast.success("User registered");
       await login({ email: userInfo.email, password: userInfo.password });
     } catch (err) {
@@ -38,11 +34,9 @@ export function AuthProvider({ children }) {
       if (!userInfo.email || !userInfo.password) {
         toast.error("All fields are required");
       }
-      let response = await axios.post(
-        `/api/auth/login`,
-        userInfo,
-        { withCredentials: true },
-      );
+      let response = await axios.post(`/api/auth/login`, userInfo, {
+        withCredentials: true,
+      });
       setUser(response.data.user);
       toast.success("Login Success");
       navigate("/");
@@ -75,19 +69,10 @@ export function AuthProvider({ children }) {
 
   const checkAuth = async () => {
     try {
-      let res = await axios.get(
-        `/api/auth/me`,
-        { withCredentials: true },
-      );
+      let res = await axios.get(`/api/auth/me`, { withCredentials: true });
       if (res.status === 401) {
-        await axios.get(
-          `/api/auth/refresh`,
-          { withCredentials: true },
-        );
-        res = await axios.get(
-          `/api/auth/me`,
-          { withCredentials: true },
-        );
+        await axios.get(`/api/auth/refresh`, { withCredentials: true });
+        res = await axios.get(`/api/auth/me`, { withCredentials: true });
       }
       setUser(res.data.user);
     } catch (err) {

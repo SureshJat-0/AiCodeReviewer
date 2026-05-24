@@ -16,12 +16,9 @@ export default function PublicReview() {
   const getPublicReview = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/review/${reviewId}`,
-        {
-          withCredentials: true,
-        },
-      );
+      const res = await axios.get(`/api/review/${reviewId}`, {
+        withCredentials: true,
+      });
       setHistoryItem(res.data || null);
     } catch (err) {
       toast.error(

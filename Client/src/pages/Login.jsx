@@ -190,9 +190,7 @@ export default function Login() {
           {/* Social Login */}
           <div className="grid grid-cols-2 gap-3">
             <button
-              onClick={() =>
-                (window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api/oauth/google`)
-              }
+              onClick={() => (window.location.href = `/api/oauth/google`)}
               className="px-4 py-2.5 cursor-pointer rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center justify-center gap-2"
             >
               <FaGoogle className="w-4 h-4" />
@@ -200,7 +198,7 @@ export default function Login() {
             </button>
             <button
               onClick={() => {
-                window.location.href = `${import.meta.env.VITE_API_BASE_URL}/api/oauth/github`;
+                window.location.href = `/api/oauth/github`;
               }}
               className="px-4 py-2.5 cursor-pointer rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-gray-700 text-gray-300 hover:text-gray-200 font-medium text-sm transition-all flex items-center justify-center gap-2"
             >

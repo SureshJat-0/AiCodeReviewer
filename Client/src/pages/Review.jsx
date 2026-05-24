@@ -65,7 +65,7 @@ const userId = req.query.id;
       setResponse();
       console.log("Getting response...");
       const { data } = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/ai/response`,
+        `/api/ai/response`,
         { code },
         {
           withCredentials: true,
@@ -98,7 +98,7 @@ const userId = req.query.id;
     if (user) {
       // adding response in databse
       const res = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/review/new`,
+        `/api/review/new`,
         { input: code, output: data, userId: user._id },
         { withCredentials: true },
       );
@@ -138,11 +138,9 @@ const userId = req.query.id;
       }
       const formData = new FormData();
       formData.append("file", selectedFile);
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/api/ai/upload`,
-        formData,
-        { withCredentials: true },
-      );
+      const response = await axios.post(`/api/ai/upload`, formData, {
+        withCredentials: true,
+      });
       const codeToReview = response.data.content;
       if (!codeToReview) {
         toast.error("We couldn't read that file.");

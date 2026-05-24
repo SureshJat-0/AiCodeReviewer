@@ -21,12 +21,9 @@ export default function Histories() {
   const getHistoryFromDatabase = async () => {
     try {
       setLoading(true);
-      const historyDbResponse = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/review/get/${user._id}`,
-        {
-          withCredentials: true,
-        },
-      );
+      const historyDbResponse = await axios.get(`/api/review/get/${user._id}`, {
+        withCredentials: true,
+      });
       setHistory(historyDbResponse.data);
     } catch (err) {
       console.log(err);
@@ -40,12 +37,9 @@ export default function Histories() {
     if (user) {
       // delete from the database
       try {
-        await axios.delete(
-          `${import.meta.env.VITE_API_BASE_URL}/api/review/${user._id}/${_id}`,
-          {
-            withCredentials: true,
-          },
-        );
+        await axios.delete(`/api/review/${user._id}/${_id}`, {
+          withCredentials: true,
+        });
         setHistoryForUser();
       } catch (err) {
         console.log(err);
