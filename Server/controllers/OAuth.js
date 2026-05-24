@@ -42,7 +42,7 @@ const OAuthCallback = async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none", // client and server are on different domain for production
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
   res
@@ -98,7 +98,7 @@ const gitHubOAuthCallback = async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "none", // client and server are on different domain for production
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   };
 
