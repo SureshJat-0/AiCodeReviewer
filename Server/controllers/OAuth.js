@@ -1,6 +1,15 @@
 import axios from "axios";
 import User from "../models/user.js";
+import jwt from "jsonwebtoken";
+
 import { getAccessToken, getRefreshToken } from "./auth.js";
+
+const cookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
 
 const redirectOAuth = (req, res) => {
   const redirectUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${process.env.GOOGLE_OAUTH_REDIRECT_URI}&response_type=code&scope=openid email profile`;
@@ -36,20 +45,15 @@ const OAuthCallback = async (req, res) => {
     });
   }
 
-  const jwt_access_token = getAccessToken(user._id);
-  const jwt_refresh_token = getRefreshToken(user._id);
+  const tempToken = jwt.sign(
+    { userId: user._id },
+    `${process.env.JWT_ACCESS_SECRET_KEY}_TEMP`,
+    { expiresIn: 5 * 60 * 1000 }, // 5 min
+  );
 
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  };
-  res
-    .cookie("accessToken", jwt_access_token, cookieOptions)
-    .cookie("refreshToken", jwt_refresh_token, cookieOptions);
-
-  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
+  res.redirect(
+    `${process.env.CLIENT_URL}/auth/oauth/success?token=${tempToken}`,
+  );
 };
 
 const gitHubRedirectOAuth = (req, res) => {
@@ -92,21 +96,31 @@ const gitHubOAuthCallback = async (req, res) => {
     });
   }
 
-  const jwt_access_token = getAccessToken(user._id);
-  const jwt_refresh_token = getRefreshToken(user._id);
+  const tempToken = jwt.sign(
+    { userId: user._id },
+    `${process.env.JWT_ACCESS_SECRET_KEY}_TEMP`,
+    { expiresIn: 5 * 60 * 1000 }, // 5 min
+  );
 
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  };
+  res.redirect(
+    `${process.env.CLIENT_URL}/auth/oauth/success?token=${tempToken}`,
+  );
+};
+
+const exchangeToken = (req, res) => {
+  const { token } = req.body;
+  const decoded = jwt.verify(
+    token,
+    `${process.env.JWT_ACCESS_SECRET_KEY}_TEMP`,
+  );
+
+  const accessToken = getAccessToken(decoded.userId);
+  const refreshToken = getRefreshToken(decoded.userId);
 
   res
-    .cookie("accessToken", jwt_access_token, cookieOptions)
-    .cookie("refreshToken", jwt_refresh_token, cookieOptions);
-
-  res.redirect(`${process.env.CLIENT_URL}/auth/oauth/success`);
+    .cookie("accessToken", accessToken, cookieOptions)
+    .cookie("refreshToken", refreshToken, cookieOptions)
+    .json({ success: true });
 };
 
 export {
@@ -114,4 +128,5 @@ export {
   OAuthCallback,
   gitHubRedirectOAuth,
   gitHubOAuthCallback,
+  exchangeToken,
 };
