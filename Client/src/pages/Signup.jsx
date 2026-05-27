@@ -15,6 +15,7 @@ export default function Signup() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { signup } = useAuth();
 
   const handleChange = (e) => {
@@ -27,12 +28,14 @@ export default function Signup() {
 
   const handleUserSignup = async (e) => {
     e.preventDefault();
+    setLoading(true);
     await signup(formData);
     setFormData({
       fullName: "",
       email: "",
       password: "",
     });
+    setLoading(false);
   };
 
   return (
@@ -208,10 +211,15 @@ export default function Signup() {
             {/* Signup Button */}
             <button
               type="submit"
-              className="w-full px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all flex items-center justify-center gap-2 mt-6"
+              disabled={loading}
+              className="w-full px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all flex items-center justify-center gap-2 mt-6 cursor-pointer disabled:cursor-not-allowed"
             >
               <FiPlus className="w-5 h-5" />
-              Create Account
+              {loading ? (
+                <span>Creating Account...</span>
+              ) : (
+                <span>Create Account</span>
+              )}
             </button>
           </form>
 

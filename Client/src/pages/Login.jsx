@@ -13,13 +13,16 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { login } = useAuth();
 
   const handleLogin = async (e) => {
+    setLoading(true);
     e.preventDefault();
     await login({ email, password });
     setEmail("");
     setPassword("");
+    setLoading(false);
   };
 
   return (
@@ -168,10 +171,11 @@ export default function Login() {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all flex items-center justify-center gap-2 mt-6"
+              disabled={loading}
+              className="w-full px-4 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-all flex items-center justify-center gap-2 mt-6 cursor-pointer disabled:cursor-not-allowed"
             >
               <BiLogIn className="w-5 h-5" />
-              Sign In
+              {loading ? <span>Signing In...</span> : <span>Sign In</span>}
             </button>
           </form>
 

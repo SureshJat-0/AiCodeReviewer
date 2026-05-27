@@ -15,6 +15,7 @@ import { useAuth } from "../contexts/auth";
 export default function Aside() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [logoutLoading, setLogoutLoading] = useState(false);
   const location = useLocation();
   const { user, logout } = useAuth();
 
@@ -30,6 +31,12 @@ export default function Aside() {
 
     return () => window.removeEventListener("resize", updateViewportState);
   }, []);
+
+  const handleLogout = async () => {
+    setLogoutLoading(true);
+    await logout();
+    setLogoutLoading(false);
+  };
 
   return (
     <>
@@ -101,15 +108,17 @@ export default function Aside() {
               {user ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    logout();
-                    setSidebarOpen(false);
-                  }}
+                  onClick={handleLogout}
+                  disabled={logoutLoading}
                   aria-label="Sign Out"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-500 cursor-pointer disabled:cursor-not-allowed"
                 >
                   <BiLogOut className="h-4 w-4" />
-                  Sign Out
+                  {logoutLoading ? (
+                    <span>Signing out...</span>
+                  ) : (
+                    <span>Sign Out</span>
+                  )}
                 </button>
               ) : (
                 <Link
@@ -231,12 +240,17 @@ export default function Aside() {
             {user ? (
               <button
                 type="button"
-                onClick={logout}
+                onClick={handleLogout}
+                disabled={logoutLoading}
                 aria-label="Sign Out"
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
+                className="flex w-full cursor-pointer disabled:cursor-not-allowed items-center justify-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-500"
               >
                 <BiLogOut className="h-4 w-4" />
-                Sign Out
+                {logoutLoading ? (
+                  <span>Signing out...</span>
+                ) : (
+                  <span>Sign Out</span>
+                )}
               </button>
             ) : (
               <Link

@@ -2,7 +2,7 @@ import axios from "axios";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
 
-import { getAccessToken, getRefreshToken } from "./auth.js";
+import { getAccessToken, getRefreshToken } from "../utils/generateTokens.js";
 
 const cookieOptions = {
   httpOnly: true,

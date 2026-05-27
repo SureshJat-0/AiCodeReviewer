@@ -2,6 +2,7 @@ import CustomExpressError from "../ExpressError.js";
 import bcrypt from "bcrypt";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
+import { getAccessToken, getRefreshToken } from "../utils/generateTokens.js";
 
 const signup = async (req, res) => {
   try {
@@ -98,23 +99,6 @@ async function refreshAccessToken(req, res) {
   }
 }
 
-function getAccessToken(userId) {
-  const token = jwt.sign(
-    { userId },
-    process.env.JWT_ACCESS_SECRET_KEY,
-    { expiresIn: 15 * 60 * 1000 }, // 15 mins
-  );
-  return token;
-}
-function getRefreshToken(userId) {
-  const token = jwt.sign(
-    { userId },
-    process.env.JWT_REFRESH_SECRET_KEY,
-    { expiresIn: 7 * 24 * 60 * 60 * 1000 }, // 7 days
-  );
-  return token;
-}
-
 const logout = async (req, res) => {
   const cookieOptions = {
     httpOnly: true,
@@ -143,12 +127,4 @@ const profile = async (req, res) => {
   }
 };
 
-export {
-  signup,
-  login,
-  logout,
-  profile,
-  getAccessToken,
-  getRefreshToken,
-  refreshAccessToken,
-};
+export { signup, login, logout, profile, refreshAccessToken };
