@@ -1,12 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
-import { useContext, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
-
-const AuthContext = createContext();
-export const useAuth = () => useContext(AuthContext);
+import { AuthContext } from "./authContext";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -76,6 +73,7 @@ export function AuthProvider({ children }) {
       }
       setUser(res.data.user);
     } catch (err) {
+      console.log(err?.message);
       setUser(null);
     } finally {
       setUserLoading(false);

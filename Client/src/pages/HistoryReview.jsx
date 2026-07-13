@@ -4,64 +4,64 @@ import { HiExclamation } from "react-icons/hi";
 import { FiChevronLeft } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import ResultSection from "../components/ResultSection";
-import { useAuth } from "../contexts/auth";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useAuth } from "../contexts/authContext";
 
 export default function HistoryReview() {
-  const [historyItem, setHistoryItem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const { historyId } = useParams();
   const location = useLocation();
+  const { historyId } = useParams();
   const { user, userLoading } = useAuth();
+  const historyState = location?.state?.history ?? null;
+
+  const [historyItem, setHistoryItem] = useState(() => {
+    if (historyState) {
+      return historyState;
+    }
+
+    const storedHistory = localStorage.getItem("history");
+    if (!storedHistory) {
+      return null;
+    }
+
+    try {
+      const parsedHistory = JSON.parse(storedHistory);
+      if (Array.isArray(parsedHistory)) {
+        return parsedHistory.find((h) => h.id === historyId) || null;
+      }
+    } catch (err) {
+      console.log(err?.message);
+    }
+
+    return null;
+  });
+  const [loaded, setLoaded] = useState(Boolean(historyState));
 
   useEffect(() => {
-    if (userLoading) return;
-    const historyState = location?.state?.history;
-    if (historyState) {
-      // if history is in state
-      setHistoryItem(historyState);
-      setLoading(false);
+    if (userLoading || !user || historyState) {
       return;
     }
-    if (user) {
-      axios
-        .get(`/api/review/${historyId}`)
-        .then((res) => {
-          setHistoryItem(res.data || null);
-        })
-        .catch((err) => {
-          console.error(err);
-          toast.error(
-            err.response.data.error.message ||
-              "History you requested for does not exist",
-            { id: "review-mongo-err-toast" },
-          );
-        });
-    } else {
-      const storedHistory = localStorage.getItem("history");
-      if (!storedHistory) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const parsedHistory = JSON.parse(storedHistory);
-        if (Array.isArray(parsedHistory)) {
-          const history = parsedHistory.find((h) => h.id === historyId);
-          if (!history)
-            toast.error("History you requested for does not exits", {
-              id: "review-local-err-toast",
-            });
-          setHistoryItem(history || null);
-        }
-      } catch (err) {
-        setHistoryItem(null);
-      }
-    }
-    setLoading(false);
-  }, [user, userLoading, historyId, location.state]);
+    axios
+      .get(`/api/review/${historyId}`)
+      .then((res) => {
+        setHistoryItem(res.data || null);
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error(
+          err.response.data.error.message ||
+            "History you requested for does not exist",
+          { id: "review-mongo-err-toast" },
+        );
+      })
+      .finally(() => {
+        setLoaded(true);
+      });
+  }, [user, userLoading, historyId, historyState]);
 
-  if (loading || userLoading) {
+  const loading = userLoading || (user && !loaded);
+
+  if (loading) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-screen bg-[#0f0f0f] text-gray-100">
         <div className="flex flex-col items-center gap-6">

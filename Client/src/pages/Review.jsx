@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Editor from "@monaco-editor/react";
-import { useAuth } from "../contexts/auth";
+import { useAuth } from "../contexts/authContext";
 import { useRef } from "react";
 import { generate } from "short-uuid";
 import { toast } from "react-hot-toast";
@@ -173,6 +173,7 @@ const userId = req.query.id;
     try {
       url = new URL(githubUrl);
     } catch (error) {
+      console.log(error?.message);
       throw new Error("Invalid URL");
     }
     // 2. Validate domain

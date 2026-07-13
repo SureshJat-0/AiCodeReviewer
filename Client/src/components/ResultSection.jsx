@@ -39,6 +39,7 @@ export default function ResultSection({
         icon: "✓",
       });
     } catch (err) {
+      console.log(err?.message);
       toast.error("Failed to copy code. Please try again.", {
         duration: 3000,
         icon: "✕",
@@ -222,6 +223,7 @@ export default function ResultSection({
           duration: 3000,
         });
       } catch (err) {
+        console.log(err?.message);
         toast.error("Failed to generate PDF report. Please try again.", {
           duration: 3000,
         });
@@ -243,178 +245,177 @@ export default function ResultSection({
     return cursorY;
   };
 
-  // Export Modal Component
-  const ExportModal = () => (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-linear-to-b from-[#1a1a1a] to-[#0f0f0f] rounded-2xl border border-gray-700/50 shadow-2xl w-full max-w-md animate-in">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-700/30">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
-              <FiDownload className="w-5 h-5 text-blue-400" />
-            </div>
-            <h2 className="text-lg font-semibold text-white">Export Report</h2>
-          </div>
-          <button
-            onClick={() => setOpenExportWindow(false)}
-            className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-800/50"
-            aria-label="Close export modal"
-          >
-            <FiX className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-5">
-          <p className="text-sm text-gray-400 leading-relaxed">
-            Select your preferred format to download the complete code review
-            report with all findings and recommendations.
-          </p>
-
-          {/* Export Format Options */}
-          <div className="space-y-3">
-            {/* Share Publicly Option */}
-            {reviewId ? (
-              <div className="p-4 rounded-xl border border-green-500/30 cursor-default group">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <FiShare2 className="w-5 h-5 text-green-400" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-white">
-                        Share Publicly
-                      </span>
-                      <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-semibold">
-                        Public Link
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-400 mb-3">
-                      Share your code review with others via a direct link
-                    </p>
-                    <div className="flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/60 border border-gray-700/50">
-                      <code className="flex-1 text-xs text-gray-300 truncate font-mono">
-                        {`${window.location.origin}/share/${reviewId}`}
-                      </code>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(
-                            `${window.location.origin}/share/${reviewId}`,
-                          );
-                          toast.success("Link copied to clipboard!", {
-                            duration: 2000,
-                            icon: "✓",
-                          });
-                        }}
-                        className="px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-500 text-white transition-colors flex items-center gap-1.5 shrink-0 text-sm font-medium cursor-pointer"
-                      >
-                        <FiCopy className="w-4 h-4" />
-                        Copy
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="p-4 rounded-xl border border-gray-600/30 bg-gray-900/40 cursor-not-allowed">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-gray-600/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <FiShare2 className="w-5 h-5 text-gray-500" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="font-medium text-gray-400">
-                        Share Publicly
-                      </span>
-                      <span className="px-2 py-1 rounded-full bg-gray-700/50 text-gray-400 text-xs font-semibold">
-                        Not Available
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      Save your review to enable public sharing
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* PDF Option */}
-            <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
-              <input
-                type="radio"
-                name="export"
-                value="pdf"
-                onChange={(e) => setOutputType(e.target.value)}
-                checked={outputType === "pdf"}
-                className="w-4 h-4 accent-blue-500"
-              />
-              <div className="ml-4 flex-1">
-                <div className="flex items-center gap-2">
-                  <MdPictureAsPdf className="w-5 h-5 text-blue-400" />
-                  <span className="font-medium text-white group-hover:text-blue-400">
-                    PDF Report
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Professional document format for sharing and archiving
-                </p>
-              </div>
-              {outputType === "pdf" && (
-                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              )}
-            </label>
-
-            {/* JSON Option */}
-            <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
-              <input
-                type="radio"
-                name="export"
-                value="json"
-                onChange={(e) => setOutputType(e.target.value)}
-                checked={outputType === "json"}
-                className="w-4 h-4 accent-blue-500"
-              />
-              <div className="ml-4 flex-1">
-                <div className="flex items-center gap-2">
-                  <MdDataObject className="w-5 h-5 text-blue-400" />
-                  <span className="font-medium text-white group-hover:text-blue-400">
-                    JSON Format
-                  </span>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Structured data format for integration and processing
-                </p>
-              </div>
-              {outputType === "json" && (
-                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-              )}
-            </label>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
-            <button
-              onClick={() => setOpenExportWindow(false)}
-              className="flex-1 px-4 py-2.5 rounded-lg border border-gray-700/50 text-gray-300 hover:bg-gray-800/50 hover:border-gray-600/50 transition-all font-medium text-sm"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={(e) => exportOutput(e, response)}
-              className="flex-1 px-4 py-2.5 rounded-lg bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white transition-all font-medium text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/20"
-            >
-              <FiDownload className="w-4 h-4" />
-              Download
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="space-y-0">
-      {openExportWindow && <ExportModal />}
+      {openExportWindow && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-linear-to-b from-[#1a1a1a] to-[#0f0f0f] rounded-2xl border border-gray-700/50 shadow-2xl w-full max-w-md animate-in">
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-700/30">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                  <FiDownload className="w-5 h-5 text-blue-400" />
+                </div>
+                <h2 className="text-lg font-semibold text-white">
+                  Export Report
+                </h2>
+              </div>
+              <button
+                onClick={() => setOpenExportWindow(false)}
+                className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-800/50"
+                aria-label="Close export modal"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 space-y-5">
+              <p className="text-sm text-gray-400 leading-relaxed">
+                Select your preferred format to download the complete code
+                review report with all findings and recommendations.
+              </p>
+
+              {/* Export Format Options */}
+              <div className="space-y-3">
+                {/* Share Publicly Option */}
+                {reviewId ? (
+                  <div className="p-4 rounded-xl border border-green-500/30 cursor-default group">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <FiShare2 className="w-5 h-5 text-green-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-medium text-white">
+                            Share Publicly
+                          </span>
+                          <span className="px-2 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-semibold">
+                            Public Link
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-400 mb-3">
+                          Share your code review with others via a direct link
+                        </p>
+                        <div className="flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/60 border border-gray-700/50">
+                          <code className="flex-1 text-xs text-gray-300 truncate font-mono">
+                            {`${window.location.origin}/share/${reviewId}`}
+                          </code>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(
+                                `${window.location.origin}/share/${reviewId}`,
+                              );
+                              toast.success("Link copied to clipboard!", {
+                                duration: 2000,
+                                icon: "✓",
+                              });
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-green-600 hover:bg-green-500 text-white transition-colors flex items-center gap-1.5 shrink-0 text-sm font-medium cursor-pointer"
+                          >
+                            <FiCopy className="w-4 h-4" />
+                            Copy
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl border border-gray-600/30 bg-gray-900/40 cursor-not-allowed">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-gray-600/20 flex items-center justify-center shrink-0 mt-0.5">
+                        <FiShare2 className="w-5 h-5 text-gray-500" />
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="font-medium text-gray-400">
+                            Share Publicly
+                          </span>
+                          <span className="px-2 py-1 rounded-full bg-gray-700/50 text-gray-400 text-xs font-semibold">
+                            Not Available
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          Save your review to enable public sharing
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PDF Option */}
+                <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
+                  <input
+                    type="radio"
+                    name="export"
+                    value="pdf"
+                    onChange={(e) => setOutputType(e.target.value)}
+                    checked={outputType === "pdf"}
+                    className="w-4 h-4 accent-blue-500"
+                  />
+                  <div className="ml-4 flex-1">
+                    <div className="flex items-center gap-2">
+                      <MdPictureAsPdf className="w-5 h-5 text-blue-400" />
+                      <span className="font-medium text-white group-hover:text-blue-400">
+                        PDF Report
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Professional document format for sharing and archiving
+                    </p>
+                  </div>
+                  {outputType === "pdf" && (
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  )}
+                </label>
+
+                {/* JSON Option */}
+                <label className="flex items-center p-4 rounded-xl border border-gray-700/50 cursor-pointer hover:border-blue-500/50 hover:bg-blue-500/5 transition-all group">
+                  <input
+                    type="radio"
+                    name="export"
+                    value="json"
+                    onChange={(e) => setOutputType(e.target.value)}
+                    checked={outputType === "json"}
+                    className="w-4 h-4 accent-blue-500"
+                  />
+                  <div className="ml-4 flex-1">
+                    <div className="flex items-center gap-2">
+                      <MdDataObject className="w-5 h-5 text-blue-400" />
+                      <span className="font-medium text-white group-hover:text-blue-400">
+                        JSON Format
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Structured data format for integration and processing
+                    </p>
+                  </div>
+                  {outputType === "json" && (
+                    <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                  )}
+                </label>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setOpenExportWindow(false)}
+                  className="flex-1 px-4 py-2.5 rounded-lg border border-gray-700/50 text-gray-300 hover:bg-gray-800/50 hover:border-gray-600/50 transition-all font-medium text-sm"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={(e) => exportOutput(e, response)}
+                  className="flex-1 px-4 py-2.5 rounded-lg bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white transition-all font-medium text-sm flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/20"
+                >
+                  <FiDownload className="w-4 h-4" />
+                  Download
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {!response ? (
         loading ? (
           <div className="flex flex-col items-center justify-center py-20">

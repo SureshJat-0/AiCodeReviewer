@@ -5,7 +5,7 @@ import { FiChevronLeft } from "react-icons/fi";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import ResultSection from "../components/ResultSection";
 import axios from "axios";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 
 export default function PublicReview() {
@@ -13,7 +13,7 @@ export default function PublicReview() {
   const [loading, setLoading] = useState(false);
   const { reviewId } = useParams();
 
-  const getPublicReview = async () => {
+  const getPublicReview = useCallback(async () => {
     try {
       setLoading(true);
       const res = await axios.get(`/api/review/${reviewId}`, {
@@ -29,11 +29,11 @@ export default function PublicReview() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [reviewId]);
 
   useEffect(() => {
     getPublicReview();
-  }, []);
+  }, [getPublicReview]);
 
   if (loading) {
     return (

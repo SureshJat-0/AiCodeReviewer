@@ -7,7 +7,7 @@ import { FiChevronLeft, FiEye, FiEyeOff } from "react-icons/fi";
 import { BiLogIn } from "react-icons/bi";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
-import { useAuth } from "../contexts/auth";
+import { useAuth } from "../contexts/authContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");

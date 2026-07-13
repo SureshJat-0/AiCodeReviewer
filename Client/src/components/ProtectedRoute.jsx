@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../contexts/auth";
 import toast from "react-hot-toast";
+import { useAuth } from "../contexts/authContext";
 
 export default function ProtectedRoute({ children }) {
   const { token } = useAuth();

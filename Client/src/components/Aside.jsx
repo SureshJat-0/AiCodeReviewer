@@ -10,7 +10,7 @@ import {
 } from "react-icons/fi";
 import { MdHistory } from "react-icons/md";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
-import { useAuth } from "../contexts/auth";
+import { useAuth } from "../contexts/authContext";
 
 export default function Aside() {
   const [sidebarOpen, setSidebarOpen] = useState(true);

@@ -6,7 +6,7 @@ import { MdHistory } from "react-icons/md";
 import { FiChevronLeft, FiEye, FiEyeOff, FiPlus } from "react-icons/fi";
 import { FaGoogle, FaGithub } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
-import { useAuth } from "../contexts/auth";
+import { useAuth } from "../contexts/authContext";
 
 export default function Signup() {
   const [formData, setFormData] = useState({

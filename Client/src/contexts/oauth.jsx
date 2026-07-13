@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import toast from "react-hot-toast";
 import axios from "axios";
-import { useAuth } from "./auth";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./authContext";
 
 export default function OAuth() {
   const { setUser } = useAuth();
@@ -33,7 +32,7 @@ export default function OAuth() {
       }
     }
     getUser();
-  }, []);
+  }, [token, navigate, setUser]);
 
   return <div>Loading...</div>;
 }

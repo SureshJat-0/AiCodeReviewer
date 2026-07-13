@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { FiChevronRight, FiPlus } from "react-icons/fi";
 import { MdDelete, MdHistory } from "react-icons/md";
 import { HiDocumentText } from "react-icons/hi";
-import { useAuth } from "../contexts/auth";
 import axios from "axios";
+import { useCallback } from "react";
+import { useAuth } from "../contexts/authContext";
 
 export default function Histories() {
   const [history, setHistory] = useState(null);
@@ -18,7 +19,7 @@ export default function Histories() {
     setLoading(false);
   };
 
-  const getHistoryFromDatabase = async () => {
+  const getHistoryFromDatabase = useCallback(async () => {
     try {
       setLoading(true);
       const historyDbResponse = await axios.get(`/api/review/get/${user._id}`, {
@@ -30,7 +31,7 @@ export default function Histories() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   const deleteHistory = async (e, _id) => {
     e.preventDefault();
@@ -56,17 +57,17 @@ export default function Histories() {
     }
   };
 
-  const setHistoryForUser = async () => {
+  const setHistoryForUser = useCallback(() => {
     if (user) {
       getHistoryFromDatabase();
     } else {
       getHistoryLocally();
     }
-  };
+  }, [getHistoryFromDatabase, user]);
 
   useEffect(() => {
     setHistoryForUser();
-  }, [user]);
+  }, [setHistoryForUser]);
 
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleString("en-IN", {
