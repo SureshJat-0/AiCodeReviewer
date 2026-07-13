@@ -10,11 +10,11 @@ on:
 
 jobs:
   client-ci:
-    name: Lint, Test & Build Client
+    name: CI Pipeline for Client
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: client
+        working-directory: Client
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -24,7 +24,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependancy-path: client/package-lock.json
+          cache-dependancy-path: Client/package-lock.json
 
       - name: Install dependancies
         run: npm ci
@@ -36,7 +36,7 @@ jobs:
         run: npm run build
       
       - name: Setup QEMU
-        uses: docker/setup-qumu-action@v4
+        uses: docker/setup-qemu-action@v4
       
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v4
@@ -44,6 +44,6 @@ jobs:
       - name: Build Docker Image
         uses: docker/build-push-action@v7
         with:
-          context: ./client
+          context: ./Client
           push: false
           tags: ai-code-server:latest
