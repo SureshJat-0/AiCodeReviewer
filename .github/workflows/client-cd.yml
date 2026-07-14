@@ -43,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: ./Client
-          push: false
+          push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ai-code-client:latest
             ${{ secrets.DOCKER_USERNAME }}/ai-code-client:${{ github.sha }}
