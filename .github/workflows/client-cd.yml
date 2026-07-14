@@ -27,9 +27,6 @@ jobs:
           cache: npm
           cache-dependency-path: Client/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Setup QEMU
         uses: docker/setup-qemu-action@v4
 
@@ -46,7 +43,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: ./Client
-          push: true
+          push: false
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ai-code-client:latest
             ${{ secrets.DOCKER_USERNAME }}/ai-code-client:${{ github.sha }}
