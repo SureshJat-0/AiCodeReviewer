@@ -10,7 +10,7 @@ on:
 jobs:
   server-cd:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    name: "CD Pipeline for Server"
+    name: CD Pipeline for Server
     runs-on: ubuntu-latest
     defaults:
       run:
