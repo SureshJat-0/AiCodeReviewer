@@ -60,3 +60,10 @@ coverage/
 # =========================
 *.pem
 *.key
+
+
+
+.vercel
+**/.vercel
+Client/.vercel
+.vercel/*
