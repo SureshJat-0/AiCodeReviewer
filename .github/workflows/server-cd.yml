@@ -36,12 +36,12 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: ./Server
-          push: true
+          push: false
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ai-code-server:latest
             ${{ secrets.DOCKER_USERNAME }}/ai-code-server:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Trigger Render Deployment
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      # - name: Trigger Render Deployment
+      #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
