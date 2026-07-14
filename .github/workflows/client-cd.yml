@@ -16,10 +16,6 @@ jobs:
       run:
         working-directory: Client
 
-    env:
-      MY_VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      MY_VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
@@ -30,7 +26,7 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: Client/package-lock.json
-      
+
       - name: Install dependencies
         run: npm ci
 
@@ -62,17 +58,17 @@ jobs:
       - name: Pull Project
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_ORG_ID: ${{ env.MY_VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ env.MY_VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Build Project
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_ORG_ID: ${{ env.MY_VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ env.MY_VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Trigger Vercel Deployment
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
-          VERCEL_ORG_ID: ${{ env.MY_VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ env.MY_VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
