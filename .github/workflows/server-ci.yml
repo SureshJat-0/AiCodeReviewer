@@ -8,6 +8,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
+concurrency:
+  group: server-ci
+  cancel-in-progress: true
+
 jobs:
   server-ci:
     name: CI Pipeline for Server

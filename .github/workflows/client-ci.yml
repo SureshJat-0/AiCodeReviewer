@@ -8,6 +8,13 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
+concurrency:
+  group: client-ci
+  cancel-in-progress: true
+
 jobs:
   client-ci:
     name: CI Pipeline for Client
@@ -27,7 +34,7 @@ jobs:
           cache: npm
           cache-dependency-path: Client/package-lock.json
 
-      - name: Install dependancies
+      - name: Install Dependencies
         run: npm ci
 
       - name: Run ESLint

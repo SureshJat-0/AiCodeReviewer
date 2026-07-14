@@ -7,9 +7,19 @@ on:
     types:
       - completed
 
+permissions:
+  contents: read
+
+concurrency:
+  group: server-cd
+  cancel-in-progress: true
+
 jobs:
   server-cd:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push'
+
     name: CD Pipeline for Server
     runs-on: ubuntu-latest
     defaults:
@@ -37,6 +47,7 @@ jobs:
         with:
           context: ./Server
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/ai-code-server:latest
             ${{ secrets.DOCKER_USERNAME }}/ai-code-server:${{ github.sha }}
@@ -44,4 +55,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Trigger Render Deployment
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          curl --fail --silent --show-error \
+            -X POST \
+            ${{ secrets.RENDER_DEPLOY_HOOK }}
